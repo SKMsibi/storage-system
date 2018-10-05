@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS Business (
 );CREATE TABLE IF NOT EXISTS Unite_types (
     id serial PRIMARY KEY,
     name varchar(225) NOT NULL,
-    lenght INT NOT NULL,
+    length INT NOT NULL,
     width INT NOT NULL,
     height INT NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
@@ -44,8 +44,104 @@ CREATE TABLE IF NOT EXISTS Business (
 );CREATE TABLE IF NOT EXISTS used_storages(
     id serial PRIMARY KEY,
     client_id INT REFERENCES clients(id) NOT NULL,
-    unite_id INT REFERENCES Unites(id) NOT NULL,
+    unite_id INT REFERENCES Unites(id) NOT NULL UNIQUE,
     business_id INT REFERENCES Business(id) NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );
+INSERT INTO
+    public.business(
+        name,
+        contact_name,
+        contact_number,
+        contact_email
+    )
+VALUES
+    ('TCG', 'Theo', '071659813', 'Theo@tcg.com');
+INSERT INTO
+    public.locations(address, business_id)
+VALUES
+    ('Gauteng Johannesburg Fourways riversands', 2)
+INSERT INTO
+    public.blocks(name, locations_id)
+VALUES
+    ('section-B', 2)
+INSERT INTO
+    public.unite_types(
+        name,
+        length,
+        width,
+        height
+    )
+VALUES
+    ('warehouse', 120, 180, 80)
+INSERT INTO
+    public.unites(
+        name,
+        blocks_id,
+        unite_type_id
+    )
+VALUES
+    ('A3', 1, 1)
+INSERT INTO
+    public.clients(
+        first_name,
+        last_name,
+        email,
+        telephone
+    )
+VALUES
+    ('Sabelo', 'Msibi', 'skm@gmail.com', '0715585598')
+INSERT INTO
+    public.used_storages(
+        client_id,
+        unite_id,
+        business_id
+    )
+VALUES
+    (2, 17, 2)
+SELECT
+    *
+FROM
+    public.blocks
+SELECT
+    unites.name,
+    unites.blocks_id,
+    unites.unite_type_id
+FROM
+    public.business
+    INNER JOIN locations on business.id = locations.business_id
+    INNER JOIN blocks on locations.id = blocks.locations_id
+    INNER JOIN unites on blocks.id = unites.blocks_id
+WHERE
+    business.name = 'Mzansi';
+SELECT
+    unites.name,
+    unites.blocks_id,
+    unites.unite_type_id
+FROM
+    public.unite_types
+    INNER JOIN unites on unite_types.id = unites.unite_type_id
+WHERE
+    unite_types.name = 'garage'
+SELECT
+    business.name,
+    business.contact_name,
+    business.contact_number,
+    business.contact_email,
+    locations.address
+FROM
+    public.business
+    INNER JOIN locations on business.id = locations.business_id;
+SELECT
+    unites.name,
+    unites.blocks_id,
+    unites.unite_type_id,
+    unite_types.name,
+    unite_types.lenght,
+    unite_types.width
+FROM
+    public.unite_types
+    INNER JOIN unites on unite_types.id = unites.unite_type_id
+WHERE
+    unite_types.width > 50;
