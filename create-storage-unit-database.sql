@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS Business (
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );
 INSERT INTO
-    public.business(
+    business(
         name,
         contact_name,
         contact_number,
@@ -59,15 +59,15 @@ INSERT INTO
 VALUES
     ('TCG', 'Theo', '071659813', 'Theo@tcg.com');
 INSERT INTO
-    public.locations(address, business_id)
+    locations(address, business_id)
 VALUES
     ('Gauteng Johannesburg Fourways riversands', 2)
 INSERT INTO
-    public.blocks(name, locations_id)
+    blocks(name, locations_id)
 VALUES
     ('section-B', 2)
 INSERT INTO
-    public.unite_types(
+    unite_types(
         name,
         length,
         width,
@@ -76,7 +76,7 @@ INSERT INTO
 VALUES
     ('warehouse', 120, 180, 80)
 INSERT INTO
-    public.unites(
+    unites(
         name,
         blocks_id,
         unite_type_id
@@ -84,7 +84,7 @@ INSERT INTO
 VALUES
     ('A3', 1, 1)
 INSERT INTO
-    public.clients(
+    clients(
         first_name,
         last_name,
         email,
@@ -93,7 +93,7 @@ INSERT INTO
 VALUES
     ('Sabelo', 'Msibi', 'skm@gmail.com', '0715585598')
 INSERT INTO
-    public.used_storages(
+    used_storages(
         client_id,
         unite_id,
         business_id
@@ -103,13 +103,13 @@ VALUES
 SELECT
     *
 FROM
-    public.blocks
+    blocks
 SELECT
     unites.name,
     unites.blocks_id,
     unites.unite_type_id
 FROM
-    public.business
+    business
     INNER JOIN locations on business.id = locations.business_id
     INNER JOIN blocks on locations.id = blocks.locations_id
     INNER JOIN unites on blocks.id = unites.blocks_id
@@ -120,7 +120,7 @@ SELECT
     unites.blocks_id,
     unites.unite_type_id
 FROM
-    public.unite_types
+    unite_types
     INNER JOIN unites on unite_types.id = unites.unite_type_id
 WHERE
     unite_types.name = 'garage'
@@ -131,7 +131,7 @@ SELECT
     business.contact_email,
     locations.address
 FROM
-    public.business
+    business
     INNER JOIN locations on business.id = locations.business_id;
 SELECT
     unites.name,
@@ -141,7 +141,7 @@ SELECT
     unite_types.lenght,
     unite_types.width
 FROM
-    public.unite_types
+    unite_types
     INNER JOIN unites on unite_types.id = unites.unite_type_id
 WHERE
     unite_types.width > 50;
