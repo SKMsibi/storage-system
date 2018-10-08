@@ -11,8 +11,8 @@ ReactDOM.render(
     <Provider store={store}>
         <Router>
             <div>
-                <Route path="/" component={App} />
-                <Route path="/specifyBlocks" component={RegisterBlocks} />
+                <Route exact path="/" component={App} />
+                <Route exact path="/specifyBlocks" component={RegisterBlocks} />
             </div>
         </Router>
     </Provider >, document.getElementById('root'));
