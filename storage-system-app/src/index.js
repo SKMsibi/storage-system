@@ -1,12 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import store from './store';
+import RegisterBlocks from './components/register-blocks';
 import { Provider } from 'react-redux';
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import './index.css';
+import store from './store';
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
-    </Provider>
-    , document.getElementById('root'));
+        <Router>
+            <div>
+                <Route path="/" component={App} />
+                <Route path="/specifyBlocks" component={RegisterBlocks} />
+            </div>
+        </Router>
+    </Provider >, document.getElementById('root'));
