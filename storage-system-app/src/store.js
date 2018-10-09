@@ -3,4 +3,4 @@ import reducer from './reducers';
 const enhancers = compose(
     window.devToolsExtension ? window.devToolsExtension() : f => f
 )
-export default createStore(reducer, enhancers)
+export default createStore(reducer, enhancers);
