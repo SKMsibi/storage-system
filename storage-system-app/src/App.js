@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import BusinessForm from './components/register-business-form';
+import BusinessForm from './components/forms/register-business-form';
 import './App.css';
 
 class App extends Component {
