@@ -72,7 +72,7 @@ export class BusinessForm extends Component {
                     </div>
                 )}
                 {this.state.shouldRedirect && (
-                    <Redirect to='/specifyBlocks' />
+                    <Redirect to='/insertBlocks' />
                 )}
             </div>
         )
@@ -85,6 +85,4 @@ BusinessForm = reduxForm({
 const mapStateToProps = state => {
     return { businessForm: state.form };
 }
-const mapDispatchToProps = dispatch => ({
-})
-export default connect(mapStateToProps, mapDispatchToProps)(BusinessForm);
+export default connect(mapStateToProps, null)(BusinessForm);
