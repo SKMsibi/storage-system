@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
-import BlockForm from './insert-block-form';
+import BlockForm from './forms/insert-block-form';
 import '../App.css';
 
 export class RegisterBlocks extends Component {
@@ -13,6 +15,7 @@ export class RegisterBlocks extends Component {
         }
         this.handleChange = this.handleChange.bind(this);
         this.createBlockForms = this.createBlockForms.bind(this);
+        this.submitBlocks = this.submitBlocks.bind(this);
     }
     handleChange(event) {
         this.setState({ numberOfBlocks: event.target.value, showBlocksInsert: false });
@@ -23,6 +26,14 @@ export class RegisterBlocks extends Component {
             arrTemp.push(index);
         }
         this.setState({ blocks: arrTemp, showBlocksInsert: true })
+    }
+    async submitBlocks() {
+        var sendingBlocks = await axios.post('http://localhost:3003/submitBlocks', this.props.blocksData.InsertBlockForm.values);
+        if (sendingBlocks.status === 201) {
+            this.setState({ shouldRedirect: true })
+        } else {
+            this.setState({ error: true, errorMessage: sendingBlocks.data })
+        }
     }
     render() {
         return (
@@ -35,8 +46,9 @@ export class RegisterBlocks extends Component {
                         return <BlockForm number={item} key={item} />
                     })}
                     {this.state.showBlocksInsert && (
-                        <button>Insert Blocks</button>
+                        <Link to="/insertUnitType"><button onClick={this.submitBlocks}>Insert Blocks</button></Link>
                     )}
+                    <Link to="/"><button>back</button></Link>
                 </header>
             </div>
         );
@@ -44,8 +56,6 @@ export class RegisterBlocks extends Component {
 }
 
 const mapStateToProps = state => {
-    return { businessInfo: state };
+    return { blocksData: state.form };
 }
-const mapDispatchToProps = dispatch => ({
-})
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterBlocks);
+export default connect(mapStateToProps, null)(RegisterBlocks);
