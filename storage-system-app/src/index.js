@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import RegisterBlocks from './components/register-blocks';
+import InsertUniteType from './components/insert-unit-type';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import './index.css';
@@ -12,7 +13,8 @@ ReactDOM.render(
         <Router>
             <div>
                 <Route exact path="/" component={App} />
-                <Route exact path="/specifyBlocks" component={RegisterBlocks} />
+                <Route exact path="/insertBlocks" component={RegisterBlocks} />
+                <Route exact path="/insertUnitType" component={InsertUniteType} />
             </div>
         </Router>
     </Provider >, document.getElementById('root'));
