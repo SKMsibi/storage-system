@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import { Field, reduxForm } from 'redux-form'
 
 export class BlockForm extends Component {
@@ -9,7 +8,7 @@ export class BlockForm extends Component {
             <form>
                 <div className="business-info">
                     <div className="form-row">
-                        <label htmlFor={`blockName${this.props.number}`}>Block {this.props.number} Name</label>
+                        <label htmlFor={`blockName${this.props.number}`}>Block Name</label>
                         <Field name={`blockName${this.props.number}`} component="input" type="text" />
                     </div>
                 </div>
