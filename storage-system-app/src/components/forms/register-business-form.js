@@ -26,8 +26,6 @@ export class BusinessForm extends Component {
                 this.setState({ IsError: true, errorMessage: sendingData.data })
             }
         } catch (error) {
-            console.log("error", error);
-
             this.setState({ IsError: true, errorMessage: "Could not process your request. Please make sure all fields are filled and try again." });
             setTimeout(() => {
                 this.setState({ IsError: false, shouldRedirect: false })
@@ -68,7 +66,7 @@ export class BusinessForm extends Component {
                     </div>
                 )}
                 {this.state.shouldRedirect && !this.state.IsError && (
-                    <Redirect to='/insertLocation' />
+                    <Redirect to='/insertBlocks' />
                 )}
             </div>
         )
