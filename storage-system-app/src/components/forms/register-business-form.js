@@ -9,7 +9,7 @@ export class BusinessForm extends Component {
         super(props)
         this.state = {
             shouldRedirect: false,
-            error: false,
+            IsError: false,
             errorMessage: ""
         }
     }
@@ -18,20 +18,34 @@ export class BusinessForm extends Component {
     }
 
     async registerBusiness() {
-        var sendingData = await axios.post('http://localhost:3003/businessData', this.props.businessForm.RegisterBusiness.values);
-        if (sendingData.status === 201) {
-            this.setState({ shouldRedirect: true })
-        } else {
-            this.setState({ error: true, errorMessage: sendingData.data })
+        try {
+            var sendingData = await axios.post('http://localhost:3003/businessData', this.props.businessForm.RegisterBusiness.values);
+            if (sendingData.status === 201) {
+                this.setState({ shouldRedirect: true })
+            } else {
+                this.setState({ IsError: true, errorMessage: sendingData.data })
+            }
+        } catch (error) {
+            console.log("error", error);
+
+            this.setState({ IsError: true, errorMessage: "Could not process your request. Please make sure all fields are filled and try again." });
+            setTimeout(() => {
+                this.setState({ IsError: false, shouldRedirect: false })
+            }, 3000);
         }
     }
     render() {
         return (
             <div>
-                {!this.state.shouldRedirect && (
+                {this.state.IsError && (
+                    <h4>{this.state.errorMessage}</h4>
+                )}
+                {!this.state.shouldRedirect && !this.state.IsError && (
                     <div>
+                        <h2>Register your business here.</h2>
                         <form>
                             <div className="business-info">
+                                <h3>Business Info</h3>
                                 <div className="form-row">
                                     <label htmlFor="firstName">Business Name</label>
                                     <Field name="businessName" component="input" type="text" />
@@ -49,30 +63,12 @@ export class BusinessForm extends Component {
                                     <Field name="email" component="input" type="email" />
                                 </div>
                             </div>
-                            <div className="business-address">
-                                <div className="form-row">
-                                    <label htmlFor="country">Country</label>
-                                    <Field name="country" component="input" type="text" />
-                                </div>
-                                <div className="form-row">
-                                    <label htmlFor="address1">address1</label>
-                                    <Field name="address1" component="input" type="text" />
-                                </div>
-                                <div className="form-row">
-                                    <label htmlFor="address2">Address2</label>
-                                    <Field name="address2" component="input" type="text" />
-                                </div>
-                                <div className="form-row">
-                                    <label htmlFor="address3">Address3</label>
-                                    <Field name="address3" component="input" type="text" />
-                                </div>
-                            </div>
                         </form>
                         <button onClick={() => this.registerBusiness()}>Next</button>
                     </div>
                 )}
-                {this.state.shouldRedirect && (
-                    <Redirect to='/insertBlocks' />
+                {this.state.shouldRedirect && !this.state.IsError && (
+                    <Redirect to='/insertLocation' />
                 )}
             </div>
         )
