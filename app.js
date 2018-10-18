@@ -37,7 +37,6 @@ app.post('/businessLocation', async function (req, res) {
 })
 app.post('/submitBlocks', async function (req, res) {
   await client.query(`INSERT INTO blocks(name, contact_name, contact_number, contact_email) VALUES ( ${req.body.businessName ? `'${req.body.businessName}'` : null}, ${req.body.contactName ? `'${req.body.contactName}'` : null}, ${req.body.telephone ? `'${req.body.telephone}'` : null}, ${req.body.email ? `'${req.body.email}'` : null})`);
-  console.log("blocks to be added to the database", req.body);
   res.status(201).end();
 });
 
