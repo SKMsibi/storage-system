@@ -30,7 +30,7 @@ business-location{
 input{
   height: fit-content;
 }
-.App-header {
+.App-container {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -52,4 +52,13 @@ input{
   to {
     transform: rotate(360deg);
   }
+}
+/* flksadjflkjasldjfalk */
+
+.nav{
+  text-align: right;
+}
+.navigation-button{
+  height: 7%;
+  width: 5%;
 }
