@@ -16,7 +16,7 @@ export class InsertLocation extends Component {
         }
     }
     async componentDidMount() {
-        var allTheBusiness = await axios.get('http://localhost:3003/business');
+        var allTheBusiness = await axios.get('http://localhost:3003/businesses');
         this.setState({ allBusiness: allTheBusiness.data })
     }
     render() {
