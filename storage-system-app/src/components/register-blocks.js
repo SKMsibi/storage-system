@@ -38,7 +38,7 @@ export class RegisterBlocks extends Component {
     render() {
         return (
             <div className="register-blocks">
-                <header className="App-header">
+                <div className="App-container">
                     <label>How many blocks are you adding?</label>
                     <input type="number" min="1" name="numberOfBlocks" value={this.state.numberOfBlocks} onChange={this.handleChange} />
                     <button onClick={this.createBlockForms}>Go</button>
@@ -49,7 +49,7 @@ export class RegisterBlocks extends Component {
                         <Link to="/insertUnitType"><button onClick={this.submitBlocks}>Insert Blocks</button></Link>
                     )}
                     <Link to="/"><button>back</button></Link>
-                </header>
+                </div>
             </div>
         );
     }

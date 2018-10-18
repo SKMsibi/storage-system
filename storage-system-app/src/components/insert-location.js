@@ -21,7 +21,7 @@ export class InsertLocation extends Component {
     }
     render() {
         return (
-            <header className="App-header">
+            <div className="App-container">
                 <div>
                     <h3>Business Address</h3>
                     <p>Please select the business you want to insert location for.</p>
@@ -41,7 +41,7 @@ export class InsertLocation extends Component {
                         <Link to="/"><button>back</button></Link>
                     </div>
                 </div >
-            </header>
+            </div>
         )
     }
 }

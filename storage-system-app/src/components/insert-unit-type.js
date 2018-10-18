@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { UnitTypeForm } from "./forms/insert-unit-type-form";
 import '../App.css';
 
-export default class InsertUniteType extends Component {
+export default class InsertUnite extends Component {
     render() {
         return (
             <div className="register-blocks">
-                <header className="App-header">
+                <div className="App-container">
                     <h3>How many unites are you inserting?</h3>
                     <UnitTypeForm />
-                </header>
+                </div>
             </div>
         );
     }
