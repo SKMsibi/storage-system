@@ -10,36 +10,91 @@ var connectionString = "postgres://sabelo:1230skm@localhost:5432/storage_system"
 const client = new pg.Client(connectionString);
 client.connect();
 
+async function getAllBusinessNames() {
+  const businessNames = await client.query(`SELECT name FROM business;`);
+  // await client.end();
+  return businessNames.rows;
+};
+async function insertBusinessLocation(businessName, country, address1, address2, address3) {
+  const businessId = await client.query(`SELECT id FROM business WHERE name = '${businessName}';`);
+  await client.query("INSERT INTO locations(country, address1,address2, address3, business_id) VALUES ( $1,$2,$3,$4,$5 )", [country ? country : null, address1 ? address1 : null, address2 ? address2 : null, address3 ? address3 : null, businessId.rows[0].id > 0 ? businessId.rows[0].id : null]);
+  // await client.end();
+};
+async function insertBusinessInfo(businessName, contactName, telephone, email) {
+  var addingBusiness = await client.query("INSERT INTO business(name, contact_name, contact_number, contact_email) VALUES ($1,$2,$3,$4)", [businessName ? businessName : null, contactName ? contactName : null, telephone ? telephone : null, email ? email : null]);
+  // await client.end();
+  return addingBusiness;
+};
+async function insertBlocks(params) {
+  var addingBusiness = await client.query("blocks(name, locations_id) VALUES ($1, $2);", [name ? name : null, location ? location : null]);
+};
+async function getAllUnitTypes(unitTypeInfo) {
+  var unitTypeDetails = unitTypeInfo.split(",");
+  var unitTypes = await client.query("SELECT * FROM unit_types WHERE unit_types.name = $1 AND Unit_types.height = $2 AND Unit_types.length = $3 AND Unit_types.width = $4;", unitTypeDetails);
+  return unitTypes.rows;
+};
+async function getAllUnitsByUnitTypeId(unitTypeId) {
+  var units = await client.query("SELECT name FROM units WHERE Unit_type_id = $1", [unitTypeId]);
+  return units.rows;
+};
+async function getAllUnitsByBusinessName(businessName) {
+  const units = await client.query("SELECT units.name FROM business INNER JOIN Unit_types on business.id = Unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id WHERE business.name = $1;", [businessName]);
+  return units.rows
+};
+async function getUnits(params) {
+  var allUnits = [];
+  if (params.searchBy === "unit Types") {
+    var unitTypes = await getAllUnitTypes(params.searchPhrase);
+    for (let index = 0; index < unitTypes.length; index++) {
+      var unit = await getAllUnitsByUnitTypeId(unitTypes[index].id);
+      allUnits = [...allUnits, ...unit]
+    }
+  } else if (params.searchBy === "business") {
+    var unit = await getAllUnitsByBusinessName(params.searchPhrase);
+    allUnits = [...unit]
+  }
+  return allUnits;
+}
 app.post('/businessData', async function (req, res) {
   try {
-    await client.query(`INSERT INTO business(name, contact_name, contact_number, contact_email) VALUES ( ${req.body.businessName ? `'${req.body.businessName}'` : null}, ${req.body.contactName ? `'${req.body.contactName}'` : null}, ${req.body.telephone ? `'${req.body.telephone}'` : null}, ${req.body.email ? `'${req.body.email}'` : null})`);
+    await insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email)
     res.status(201).end();
   } catch (error) {
     res.status(500).send("sorry cant register business info : " + `${error}`).end();
   }
 });
-app.get('/business', async function (req, res) {
-  const businessId = await client.query(`SELECT name FROM business;`);
-  if (businessId) {
-    res.send(businessId.rows).status(201).end();
+app.get('/unitTypes', async function (req, res) {
+  const units = await client.query(`SELECT name, length, width, height FROM unit_types;`);
+  // client.end();
+  if (units) {
+    res.send(units.rows).status(201).end();
   } else {
     res.status(500).end();
   }
 });
+app.get('/businesses', async function (req, res) {
+  var businessNames = await getAllBusinessNames();
+  if (businessNames) {
+    res.status(200).send(businessNames).end();
+  } else {
+    res.status(500).end();
+  }
+});
+app.get('/allUnits/:searchBy/:searchPhrase', async function (req, res) {
+  var allUnits = await getUnits(req.params);
+  if (allUnits.length > 0) {
+    res.status(201).send(allUnits).end()
+  }
+});
+
 app.post('/businessLocation', async function (req, res) {
   try {
-    const businessId = await client.query(`SELECT id FROM business WHERE name = '${req.body.businessName}';`);
-    await client.query(`INSERT INTO locations(country, address1,address2, address3, business_id) VALUES ( ${req.body.country ? `'${req.body.country}'` : null}, ${req.body.address1 ? `'${req.body.address1}'` : null}, ${req.body.address2 ? `'${req.body.address2}'` : null}, ${req.body.address3 ? `'${req.body.address3}'` : null}, ${businessId.rows[0].id > 0 ? businessId.rows[0].id : null} )`);
+    insertBusinessLocation(req.body.businessName, req.body.country, req.body.address1, req.body.address2, req.body.address3)
     res.status(201).end();
   } catch (error) {
     res.status(500).send("sorry cant register business address : " + `${error}`).end();
   }
-})
-app.post('/submitBlocks', async function (req, res) {
-  await client.query(`INSERT INTO blocks(name, contact_name, contact_number, contact_email) VALUES ( ${req.body.businessName ? `'${req.body.businessName}'` : null}, ${req.body.contactName ? `'${req.body.contactName}'` : null}, ${req.body.telephone ? `'${req.body.telephone}'` : null}, ${req.body.email ? `'${req.body.email}'` : null})`);
-  res.status(201).end();
 });
-
 app.listen(3003, function () {
   console.log('web server listening on port 3003')
 });
