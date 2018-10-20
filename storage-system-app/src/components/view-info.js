@@ -10,7 +10,9 @@ export default class viewInfo extends Component {
             displaySelected: false,
             searchBy: '',
             searchPhrase: '',
-            showInput: false
+            showInput: false,
+            units: [],
+            displayUnits: false
         }
     }
     componentDidMount() {
@@ -18,12 +20,13 @@ export default class viewInfo extends Component {
     }
     async changeSearchBy() {
         if (this.refs.search.value === 'search') {
-            this.setState({ showInput: false })
+            this.setState({ showInput: false, displayUnits: false })
         } else {
+            this.setState({ displayUnits: false })
             if (this.refs.search.value === 'business') {
                 var allTheBusiness = await axios.get('http://localhost:3003/businesses');
                 this.setState({ allBusiness: allTheBusiness.data, showInput: true, searchBy: this.refs.search.value });
-            } else if (this.refs.search.value === "unit") {
+            } else if (this.refs.search.value === "unit Types") {
                 var allUnitTypes = await axios.get('http://localhost:3003/unitTypes');
                 this.setState({ allUnitTypes: allUnitTypes.data, showInput: true, searchBy: this.refs.search.value });
             } else {
@@ -58,15 +61,19 @@ export default class viewInfo extends Component {
         }
     }
     async getData() {
-        var BusinessData = await axios.get(`http://localhost:3003/businessData/${this.state.searchBy}/${this.state.searchPhrase}`);
+        var allUnits = await axios.get(`http://localhost:3003/allUnits/${this.state.searchBy}/${this.state.searchPhrase}`);
+        if (allUnits) {
+            this.setState({ units: allUnits.data, displayUnits: true });
+        }
     }
     render() {
         return (
             <div className="App-container">
+                <h3>View all units</h3>
                 <select ref="search" onChange={() => this.changeSearchBy()}>
-                    <option value="search">search by</option>
+                    <option value="search">sort by</option>
                     <option value="business">Business</option>
-                    <option value="unit">Unit</option>
+                    <option value="unit Types">Unit Type</option>
                     <option value="locations">Locations</option>
                 </select>
                 {this.state.showInput && this.state.searchBy === "business" && (
@@ -79,14 +86,18 @@ export default class viewInfo extends Component {
                 {this.state.showInput && this.state.searchBy === "locations" && (
                     <input type="text" name="location" placeholder="location search key(country/province/town)" ref="select" onChange={() => this.handleChange()} />
                 )}
-                {this.state.showInput && this.state.searchBy === "unit" && (
+                {this.state.showInput && this.state.searchBy === "unit Types" && (
                     <select ref="select" name="unit types" onChange={() => this.handleChange()}>
                         <option value="Select unit type">Select unit type (height, length, width)</option>
                         {this.state.allUnitTypes.map(singleUnitType => {
-                            return <option key={this.state.allUnitTypes.indexOf(singleUnitType)} value={`${singleUnitType.name} ${singleUnitType.height} ${singleUnitType.length} ${singleUnitType.width}`}> {singleUnitType.name} ({singleUnitType.height}, {singleUnitType.length}, {singleUnitType.width})</option>
+                            return <option key={this.state.allUnitTypes.indexOf(singleUnitType)} value={`${singleUnitType.name}, ${singleUnitType.height}, ${singleUnitType.length}, ${singleUnitType.width}`}> {singleUnitType.name} ({singleUnitType.height}, {singleUnitType.length}, {singleUnitType.width})</option>
                         })}
                     </select>)}
                 <button onClick={() => this.getData()} ref="getButton">Go</button>
+                {this.state.displayUnits && (
+                    this.state.units.map(item =>
+                        <h4>{item.name}</h4>)
+                )}
             </div >
         )
     }
