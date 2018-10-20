@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS business (
 );CREATE TABLE IF NOT EXISTS unit_types (
     id serial PRIMARY KEY,
     name varchar(100) NOT NULL,
+    business_id INT REFERENCES business(id) NOT NULL,
     length INT NOT NULL,
     width INT NOT NULL,
     height INT NOT NULL,
@@ -32,8 +33,7 @@ CREATE TABLE IF NOT EXISTS business (
 );CREATE TABLE IF NOT EXISTS units (
     id serial PRIMARY KEY,
     name varchar(100) NOT NULL,
-    blocks_id INT REFERENCES business(id) NOT NULL,
-    Unit_type_id INT REFERENCES Unit_types(id) NOT NULL,
+    unit_type_id INT REFERENCES Unit_types(id) NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS clients(
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS business (
 );CREATE TABLE IF NOT EXISTS client_storages(
     id serial PRIMARY KEY,
     client_id INT REFERENCES clients(id) NOT NULL,
-    Unit_id INT REFERENCES units(id) NOT NULL UNIQUE,
+    unit_id INT REFERENCES units(id) NOT NULL UNIQUE,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );
@@ -61,30 +61,39 @@ INSERT INTO
 VALUES
     ('TCG', 'Theo', '071659813', 'Theo@tcg.com');
 INSERT INTO
-    locations(country, address1,address2, address3, business_id)
+    locations(
+        country,
+        address1,
+        address2,
+        address3,
+        business_id
+    )
 VALUES
-    ('South Africa','alexander township','corner London road sixth evanue','boikutsong flats block8 no9', 1);
+    (
+        'South Africa',
+        'alexander township',
+        'corner London road sixth evanue',
+        'boikutsong flats block8 no9',
+        1
+    );
 INSERT INTO
     blocks(name, locations_id)
 VALUES
-    ('section-B', 2);
+    ('section-B', 1);
 INSERT INTO
     Unit_types(
         name,
+        business_id,
         length,
         width,
         height
     )
 VALUES
-    ('warehouse', 120, 180, 80);
+    ('warehouse', 1, 120, 180, 80);
 INSERT INTO
-    Units(
-        name,
-        blocks_id,
-        Unit_type_id
-    )
+    Units(name, Unit_type_id)
 VALUES
-    ('A3', 1, 1);
+    ('A3', 1);
 INSERT INTO
     clients(
         first_name,
@@ -102,8 +111,8 @@ INSERT INTO
     )
 VALUES
     (2, 17, 2);-- SELECT
-    --     *
-    -- FROM
+    -- q    *
+    -- qFROM
     --     blocks
     -- SELECT
     --     Units.name,
