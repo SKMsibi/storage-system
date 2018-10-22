@@ -20,7 +20,7 @@ ReactDOM.render(
                 <Route exact path="/insertBlocks" component={RegisterBlocks} />
                 <Route exact path="/insertUnitType" component={InsertUnite} />
                 <Route exact path="/insertLocation" component={InsertLocation} />
-                <Route exact path="/displayBusinessData" component={viewInfo} />
+                <Route exact path="/displayUnits" component={viewInfo} />
             </div>
         </Router>
     </Provider >, document.getElementById('root'));
