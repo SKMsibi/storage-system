@@ -41,6 +41,14 @@ async function getAllUnitsByBusinessName(businessName) {
   const units = await client.query("SELECT units.name FROM business INNER JOIN Unit_types on business.id = Unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id WHERE business.name = $1;", [businessName]);
   return units.rows
 };
+async function getAllMatchingLocations(location) {
+  const units = await client.query("SELECT locations.business_id,locations.country,locations.address1,locations.address2,locations.address3 FROM locations WHERE to_tsvector(country) @@ to_tsquery($1) or to_tsvector(address1) @@ to_tsquery($1) or to_tsvector(address2) @@ to_tsquery($1) or to_tsvector(address3) @@ to_tsquery($1);", [location]);
+  return units.rows;
+}
+async function getAllUnitsByLocation(location) {
+  const units = await client.query("SELECT units.name FROM locations INNER JOIN business on locations.business_id = business.id INNER JOIN unit_types on business.id = unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id  WHERE country = $1 AND address1 = $2 AND address2 = $3 AND address3 = $4;", location.split(","));
+  return units.rows;
+}
 async function getUnits(params) {
   var allUnits = [];
   if (params.searchBy === "unit Types") {
@@ -50,8 +58,11 @@ async function getUnits(params) {
       allUnits = [...allUnits, ...unit]
     }
   } else if (params.searchBy === "business") {
-    var unit = await getAllUnitsByBusinessName(params.searchPhrase);
-    allUnits = [...unit]
+    var units = await getAllUnitsByBusinessName(params.searchPhrase);
+    allUnits = [...units]
+  } else if (params.searchBy === "locations") {
+    var units = await getAllUnitsByLocation(params.searchPhrase);
+    allUnits = [...units]
   }
   return allUnits;
 }
@@ -61,6 +72,15 @@ app.post('/businessData', async function (req, res) {
     res.status(201).end();
   } catch (error) {
     res.status(500).send("sorry cant register business info : " + `${error}`).end();
+  }
+});
+app.get('/locations/:searchKey', async function (req, res) {
+  var searchKey = req.params.searchKey;
+  if (searchKey) {
+    var allLocations = await getAllMatchingLocations(searchKey);
+    res.send(allLocations).status(201).end();
+  } else {
+    res.status(500).end();
   }
 });
 app.get('/unitTypes', async function (req, res) {
@@ -81,12 +101,13 @@ app.get('/businesses', async function (req, res) {
   }
 });
 app.get('/allUnits/:searchBy/:searchPhrase', async function (req, res) {
-  var allUnits = await getUnits(req.params);
-  if (allUnits.length > 0) {
+  try {
+    var allUnits = await getUnits(req.params);
     res.status(201).send(allUnits).end()
+  } catch (error) {
+    res.status(500).end()
   }
 });
-
 app.post('/businessLocation', async function (req, res) {
   try {
     insertBusinessLocation(req.body.businessName, req.body.country, req.body.address1, req.body.address2, req.body.address3)
