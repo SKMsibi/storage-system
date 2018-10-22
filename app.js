@@ -16,7 +16,7 @@ async function getAllBusinessNames() {
   return businessNames.rows;
 };
 async function insertBusinessLocation(businessName, country, address1, address2, address3) {
-  const businessId = await client.query(`SELECT id FROM business WHERE name = '${businessName}';`);
+  const businessId = await client.query(`SELECT id FROM business WHERE name = $1;`, [businessName]);
   await client.query("INSERT INTO locations(country, address1,address2, address3, business_id) VALUES ( $1,$2,$3,$4,$5 )", [country ? country : null, address1 ? address1 : null, address2 ? address2 : null, address3 ? address3 : null, businessId.rows[0].id > 0 ? businessId.rows[0].id : null]);
   // await client.end();
 };
@@ -26,7 +26,10 @@ async function insertBusinessInfo(businessName, contactName, telephone, email) {
   return addingBusiness;
 };
 async function insertBlocks(params) {
-  var addingBusiness = await client.query("blocks(name, locations_id) VALUES ($1, $2);", [name ? name : null, location ? location : null]);
+  const businessId = await client.query(`SELECT locations.id FROM business INNER JOIN locations on business.id = locations.business_id WHERE name = $1;`, [params.businessName]);
+  for (let iterator in params.formValues) {
+    var addingBusiness = await client.query("INSERT INTO blocks(name, locations_id) VALUES ($1, $2);", [params.formValues[iterator], businessId.rows[0].id]);
+  }
 };
 async function getAllUnitTypes(unitTypeInfo) {
   var unitTypeDetails = unitTypeInfo.split(",");
@@ -111,6 +114,14 @@ app.get('/allUnits/:searchBy/:searchPhrase', async function (req, res) {
 app.post('/businessLocation', async function (req, res) {
   try {
     insertBusinessLocation(req.body.businessName, req.body.country, req.body.address1, req.body.address2, req.body.address3)
+    res.status(201).end();
+  } catch (error) {
+    res.status(500).send("sorry cant register business address : " + `${error}`).end();
+  }
+});
+app.post('/submitBlocks', async function (req, res) {
+  try {
+    await insertBlocks(req.body);
     res.status(201).end();
   } catch (error) {
     res.status(500).send("sorry cant register business address : " + `${error}`).end();
