@@ -27,9 +27,6 @@ business-location{
 .business-info{
   padding: 5%;
 }
-input{
-  height: fit-content;
-}
 .App-container {
   background-color: #282c34;
   min-height: 100vh;
