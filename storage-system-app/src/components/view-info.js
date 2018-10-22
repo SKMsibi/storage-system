@@ -7,6 +7,8 @@ export default class viewInfo extends Component {
         this.state = {
             allUnitTypes: [],
             allBusiness: [],
+            allLocations: [],
+            showLocationDropDown: false,
             displaySelected: false,
             searchBy: '',
             searchPhrase: '',
@@ -17,6 +19,12 @@ export default class viewInfo extends Component {
     }
     componentDidMount() {
         this.refs.getButton.disabled = true;
+    }
+    async getLocations(location) {
+        var allLocations = await axios.get('http://localhost:3003/locations/' + location);
+        if (allLocations.data.length > 0) {
+            this.setState({ allLocations: allLocations.data, showLocationDropDown: true });
+        }
     }
     async changeSearchBy() {
         if (this.refs.search.value === 'search') {
@@ -37,8 +45,12 @@ export default class viewInfo extends Component {
     handleChange() {
         switch (this.refs.select.name) {
             case "location":
-                this.setState({ searchPhrase: this.refs.select.value })
-                this.refs.getButton.disabled = false;
+                if (this.refs.select.value.length > 0) {
+                    this.setState({ searchPhrase: this.refs.select.value })
+                } else {
+                    this.refs.getButton.disabled = true;
+                    this.setState({ searchPhrase: this.refs.select.value })
+                }
                 break;
             case "business":
                 if (this.refs.select.value === "Select Business") {
@@ -59,6 +71,10 @@ export default class viewInfo extends Component {
             default:
                 break;
         }
+    }
+    handleLocationChange() {
+        this.setState({ searchPhrase: this.refs.locationDropDown.value })
+        this.refs.getButton.disabled = false;
     }
     async getData() {
         var allUnits = await axios.get(`http://localhost:3003/allUnits/${this.state.searchBy}/${this.state.searchPhrase}`);
@@ -84,7 +100,18 @@ export default class viewInfo extends Component {
                         })}
                     </select>)}
                 {this.state.showInput && this.state.searchBy === "locations" && (
-                    <input type="text" name="location" placeholder="location search key(country/province/town)" ref="select" onChange={() => this.handleChange()} />
+                    <div>
+                        <input type="text" name="location" placeholder="location search key(country/province/town)" ref="select" onChange={() => this.handleChange()} />
+                        <button onClick={() => this.getLocations(this.state.searchPhrase)}>find</button>
+                    </div>
+                )}
+                {this.state.showLocationDropDown && (
+                    <select ref="locationDropDown" name="locationDropDown" onChange={() => this.handleLocationChange()}>
+                        <option value="Select locations">Select locations</option>
+                        {this.state.allLocations.map(singleBusiness => {
+                            return <option key={this.state.allBusiness.indexOf(singleBusiness)} value={`${singleBusiness.country},${singleBusiness.address1},${singleBusiness.address2},${singleBusiness.address3}`}>{singleBusiness.country}, {singleBusiness.address1}, {singleBusiness.address2}, {singleBusiness.address3}</option>
+                        })}
+                    </select>
                 )}
                 {this.state.showInput && this.state.searchBy === "unit Types" && (
                     <select ref="select" name="unit types" onChange={() => this.handleChange()}>
