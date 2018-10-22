@@ -37,6 +37,11 @@ business-location{
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.block-form{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .App-link {
   color: #61dafb;
