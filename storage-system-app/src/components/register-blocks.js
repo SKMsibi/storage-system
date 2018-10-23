@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import BlockForm from './forms/insert-block-form';
 import '../App.css';
+import Redirect from 'react-router-dom/Redirect';
 
 export class RegisterBlocks extends Component {
     constructor(props) {
@@ -14,14 +15,15 @@ export class RegisterBlocks extends Component {
             numberOfBlocks: 1,
             blocks: [],
             showBlocksInsert: false,
-            selectedBusiness: ""
+            selectedBusiness: "",
+            shouldRedirect: false
         }
         this.handleChange = this.handleChange.bind(this);
         this.createBlockForms = this.createBlockForms.bind(this);
         this.submitBlocks = this.submitBlocks.bind(this);
     }
     async componentDidMount() {
-        var allTheBusiness = await axios.get('http://localhost:3003/businesses');
+        var allTheBusiness = await axios.get('http://localhost:3003/businessesWithLocations');
         this.setState({ allBusiness: allTheBusiness.data });
     }
     handleChange(event) {
@@ -69,9 +71,12 @@ export class RegisterBlocks extends Component {
                                 return <BlockForm number={item} key={item} />
                             })}
                             {this.state.showBlocksInsert && (
-                                <Link to="/insertUnitType"><button onClick={this.submitBlocks}>Insert Blocks</button></Link>
+                                <button onClick={this.submitBlocks}>Insert Blocks</button>
                             )}
                         </div>
+                    )}
+                    {this.state.shouldRedirect && (
+                        <Redirect to='/insertUnitType' />
                     )}
                     <Link to="/"><button>back</button></Link>
                 </div>
