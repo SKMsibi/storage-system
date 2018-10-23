@@ -9,7 +9,7 @@ import navbar from './components/navbar'
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import './index.css';
-import store from './store';
+import store from './redux/store';
 
 ReactDOM.render(
     <Provider store={store}>
