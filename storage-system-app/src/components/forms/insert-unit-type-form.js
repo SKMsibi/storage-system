@@ -19,7 +19,7 @@ export class UnitTypeForm extends Component {
     }
 }
 UnitTypeForm = reduxForm({
-    form: 'InsertUniteForm'
+    form: 'InsertUnitForm'
 })(UnitTypeForm)
 
 const mapStateToProps = state => {

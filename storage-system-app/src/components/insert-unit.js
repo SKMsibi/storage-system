@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { UnitTypeForm } from "./forms/insert-unit-type-form";
 import '../App.css';
 
-export default class InsertUnite extends Component {
+export default class InsertUnit extends Component {
     render() {
         return (
             <div className="register-blocks">
