@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import RegisterBlocks from './components/register-blocks';
-import InsertUnite from './components/insert-unit-type';
+import InsertUnite from './components/insert-unit';
 import InsertLocation from './components/insert-location';
 import viewInfo from "./components/view-info";
 import navbar from './components/navbar'
