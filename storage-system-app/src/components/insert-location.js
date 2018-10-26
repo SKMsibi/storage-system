@@ -5,7 +5,6 @@ import { Redirect } from 'react-router-dom';
 import InsertLocationForm from './forms/insert-location-form';
 import * as actions from '../redux/actions';
 import businesses from '../redux/thunks'
-import axios from 'axios';
 
 export class InsertLocation extends Component {
     constructor() {
