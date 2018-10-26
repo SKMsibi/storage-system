@@ -31,7 +31,8 @@ async function insertBusinessInfo(businessName, contactName, telephone, email) {
   return addingBusiness;
 };
 async function insertBlocks(params) {
-  const businessId = await client.query(`SELECT locations.id FROM business INNER JOIN locations on business.id = locations.business_id WHERE name = $1;`, [params.businessName]);
+  var location = params.selectedLocation.split(",");
+  const businessId = await client.query('SELECT id FROM locations WHERE country = $1 AND address1 = $2 AND address2 = $3 AND address3 = $4', location);
   for (let iterator in params.formValues) {
     await client.query("INSERT INTO blocks(name, locations_id) VALUES ($1, $2);", [params.formValues[iterator], businessId.rows[0].id]);
   }
@@ -49,14 +50,18 @@ async function getAllUnitsByBusinessName(businessName) {
   const units = await client.query("SELECT units.name FROM business INNER JOIN Unit_types on business.id = Unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id WHERE business.name = $1;", [businessName]);
   return units.rows
 };
+async function getAllLocationsForABusiness(businessName) {
+  var results = await client.query("SELECT country,address1,address2,address3 FROM locations INNER JOIN business on locations.business_id = business.id  WHERE business.name = $1", [businessName]);
+  return results.rows;
+};
 async function getAllMatchingLocations(location) {
   const units = await client.query("SELECT locations.business_id,locations.country,locations.address1,locations.address2,locations.address3 FROM locations WHERE to_tsvector(country) @@ to_tsquery($1) or to_tsvector(address1) @@ to_tsquery($1) or to_tsvector(address2) @@ to_tsquery($1) or to_tsvector(address3) @@ to_tsquery($1);", [location]);
   return units.rows;
-}
+};
 async function getAllUnitsByLocation(location) {
   const units = await client.query("SELECT units.name FROM locations INNER JOIN business on locations.business_id = business.id INNER JOIN unit_types on business.id = unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id  WHERE country = $1 AND address1 = $2 AND address2 = $3 AND address3 = $4;", location.split(","));
   return units.rows;
-}
+};
 async function getUnits(params) {
   var allUnits = [];
   if (params.searchBy === "unit Types") {
@@ -73,7 +78,7 @@ async function getUnits(params) {
     allUnits = [...units]
   }
   return allUnits;
-}
+};
 app.post('/businessData', async function (req, res) {
   try {
     await insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email)
@@ -83,36 +88,44 @@ app.post('/businessData', async function (req, res) {
   }
 });
 app.get('/locations/:searchKey', async function (req, res) {
-  var searchKey = req.params.searchKey;
-  if (searchKey) {
+  try {
+    var searchKey = req.params.searchKey;
     var allLocations = await getAllMatchingLocations(searchKey);
     res.send(allLocations).status(201).end();
-  } else {
+  } catch (error) {
+    res.status(500).end();
+  }
+});
+app.get('/locationsForBusiness/:businessName', async function (req, res) {
+  try {
+    var businessName = req.params.businessName;
+    const allLocations = await getAllLocationsForABusiness(businessName);
+    res.send(allLocations).status(201).end();
+  } catch (error) {
     res.status(500).end();
   }
 });
 app.get('/unitTypes', async function (req, res) {
-  const units = await client.query(`SELECT name, length, width, height FROM unit_types;`);
-  // client.end();
-  if (units) {
+  try {
+    const units = await client.query(`SELECT name, length, width, height FROM unit_types;`);
     res.send(units.rows).status(201).end();
-  } else {
+  } catch (error) {
     res.status(500).end();
   }
 });
 app.get('/businesses', async function (req, res) {
-  var businessNames = await getAllBusinessNames();
-  if (businessNames) {
+  try {
+    var businessNames = await getAllBusinessNames();
     res.status(200).send(businessNames).end();
-  } else {
+  } catch (error) {
     res.status(500).end();
   }
 });
 app.get('/businessesWithLocations', async function (req, res) {
-  var businessNames = await getAllBusinessWithLocations();
-  if (businessNames) {
+  try {
+    var businessNames = await getAllBusinessWithLocations();
     res.status(200).send(businessNames).end();
-  } else {
+  } catch (error) {
     res.status(500).end();
   }
 });
