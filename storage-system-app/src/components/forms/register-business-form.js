@@ -1,44 +1,31 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import axios from "axios";
-import { Redirect } from 'react-router-dom'
-import { Field, reduxForm } from 'redux-form'
+import { Redirect } from 'react-router-dom';
+import { Field, reduxForm } from 'redux-form';
+import { submitBusiness } from '../../redux/thunks';
+import * as actions from '../../redux/actions';
 
 export class BusinessForm extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            shouldRedirect: false,
-            IsError: false,
-            errorMessage: ""
-        }
+        this.registerBusiness = this.registerBusiness.bind(this)
     }
     componentDidMount = () => {
         this.setState({ shouldRedirect: false })
     }
-
     async registerBusiness() {
-        try {
-            var sendingData = await axios.post('http://localhost:3003/businessData', this.props.businessForm.RegisterBusiness.values);
-            if (sendingData.status === 201) {
-                this.setState({ shouldRedirect: true })
-            } else {
-                this.setState({ IsError: true, errorMessage: sendingData.data })
-            }
-        } catch (error) {
-            this.setState({ IsError: true, errorMessage: "Could not process your request. Please make sure all fields are filled and try again." });
-            setTimeout(() => {
-                this.setState({ IsError: false, shouldRedirect: false })
-            }, 3000);
-        }
+        this.props.saveBusiness(this.props.businessForm.RegisterBusiness.values);
     }
     render() {
         return (
             <div>
-                {this.state.IsError && (
-                    <h4>{this.state.errorMessage}</h4>
+                {this.props.errorPresent && (
+                    <div>
+                        <h4>Could not process your request. Please make sure all fields are filled and try again.</h4>
+                        <button onClick={() => this.props.removeErr()}>Okay</button>
+                    </div>
                 )}
-                {!this.state.shouldRedirect && !this.state.IsError && (
+                {!this.props.businessState && !this.props.errorPresent && (
                     <div>
                         <h2>Register your business here.</h2>
                         <form>
@@ -62,10 +49,10 @@ export class BusinessForm extends Component {
                                 </div>
                             </div>
                         </form>
-                        <button onClick={() => this.registerBusiness()}>Next</button>
+                        <button onClick={this.registerBusiness}>Next</button>
                     </div>
                 )}
-                {this.state.shouldRedirect && !this.state.IsError && (
+                {this.props.businessState && !this.props.errorPresent && (
                     <Redirect to='/insertBlocks' />
                 )}
             </div>
@@ -75,8 +62,21 @@ export class BusinessForm extends Component {
 BusinessForm = reduxForm({
     form: 'RegisterBusiness'
 })(BusinessForm)
-
 const mapStateToProps = state => {
-    return { businessForm: state.form };
+    return {
+        businessForm: state.form,
+        businessState: state.business.businessSubmitted,
+        errorPresent: state.business.errorOnSubmitting
+    };
 }
-export default connect(mapStateToProps, null)(BusinessForm);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        saveBusiness: (businessData) => {
+            dispatch(submitBusiness(businessData))
+        },
+        removeErr: () => {
+            dispatch(actions.removeError());
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(BusinessForm);
