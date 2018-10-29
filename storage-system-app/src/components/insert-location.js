@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import InsertLocationForm from './forms/insert-location-form';
 import * as actions from '../redux/actions';
-import businesses from '../redux/thunks'
+import { getBusinesses } from '../redux/thunks'
 
 export class InsertLocation extends Component {
     constructor() {
@@ -26,7 +26,7 @@ export class InsertLocation extends Component {
                     <p>Please select the business you want to insert location for.</p>
                     <select ref="select" onChange={() => { if (this.refs.select.value === "Select Business") { this.setState({ showForm: false }) } else { this.setState({ showForm: true, selectedBusiness: this.refs.select.value }) } }}>
                         <option value="Select Business">Select Business</option>
-                        { this.props.businesses.allBusinesses.map(singleBusiness => {
+                        {this.props.businesses.allBusinesses.map(singleBusiness => {
                             return <option key={this.props.businesses.allBusinesses.indexOf(singleBusiness)} value={singleBusiness.name}>{singleBusiness.name}</option>
                         })}
                     </select>
@@ -46,15 +46,13 @@ export class InsertLocation extends Component {
 }
 const mapStateToProps = state => {
     return {
-        state: state,
-        businessForm: state.form,
         businesses: state.business
     };
 }
 const mapDispatchToProps = (dispatch) => {
     return {
         getBusinesses: () => {
-            dispatch(businesses())
+            dispatch(getBusinesses())
         },
         setBusinessName: (name) => {
             dispatch(actions.changeSelectedBusiness(name))
