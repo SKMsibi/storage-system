@@ -14,7 +14,7 @@ export class BusinessForm extends Component {
     }
     async registerBusiness(e) {
         this.props.saveBusiness(this.props.businessForm.RegisterBusiness.values);
-        this.props.history.push("/insertBlocks");
+        this.props.history.push("/insertLocation");
         e.preventDefault();
     }
     render() {

@@ -20,9 +20,9 @@ async function getAllBusinessWithLocations() {
   // await client.end();
   return businessNames.rows;
 };
-async function insertBusinessLocation(businessName, country, address1, address2, address3) {
+async function insertBusinessLocation(businessName, address1, address2, city, region) {
   const businessId = await client.query(`SELECT id FROM business WHERE name = $1;`, [businessName]);
-  await client.query("INSERT INTO locations(country, address1,address2, address3, business_id) VALUES ( $1,$2,$3,$4,$5 )", [country ? country : null, address1 ? address1 : null, address2 ? address2 : null, address3 ? address3 : null, businessId.rows[0].id > 0 ? businessId.rows[0].id : null]);
+  await client.query("INSERT INTO locations(region,address1,address2, city , business_id) VALUES ( $1,$2,$3,$4,$5 )", [region ? region : null, address1 ? address1 : null, address2 ? address2 : null, city ? city : null, businessId.rows[0].id > 0 ? businessId.rows[0].id : null]);
   // await client.end();
 };
 async function insertBusinessInfo(businessName, contactName, telephone, email) {
@@ -51,11 +51,11 @@ async function getAllUnitsByBusinessName(businessName) {
   return units.rows
 };
 async function getAllLocationsForABusiness(businessName) {
-  var results = await client.query("SELECT country,address1,address2,address3 FROM locations INNER JOIN business on locations.business_id = business.id  WHERE business.name = $1", [businessName]);
+  var results = await client.query("SELECT region,address1,address2,city FROM locations INNER JOIN business on locations.business_id = business.id  WHERE business.name = $1", [businessName]);
   return results.rows;
 };
 async function getAllMatchingLocations(location) {
-  const units = await client.query("SELECT locations.business_id,locations.country,locations.address1,locations.address2,locations.address3 FROM locations WHERE to_tsvector(country) @@ to_tsquery($1) or to_tsvector(address1) @@ to_tsquery($1) or to_tsvector(address2) @@ to_tsquery($1) or to_tsvector(address3) @@ to_tsquery($1);", [location]);
+  const units = await client.query("SELECT business_id,region,address1,address2,city FROM locations WHERE to_tsvector(region) @@ to_tsquery($1) or to_tsvector(address1) @@ to_tsquery($1) or to_tsvector(address2) @@ to_tsquery($1) or to_tsvector(city) @@ to_tsquery($1);", [location]);
   return units.rows;
 };
 async function getAllUnitsByLocation(location) {
@@ -139,7 +139,7 @@ app.get('/allUnits/:searchBy/:searchPhrase', async function (req, res) {
 });
 app.post('/businessLocation', async function (req, res) {
   try {
-    insertBusinessLocation(req.body.businessName, req.body.country, req.body.address1, req.body.address2, req.body.address3);
+    insertBusinessLocation(req.body.businessName, req.body.address1, req.body.address2, req.body.city, req.body.region);
     res.status(201).end();
   } catch (error) {
     res.status(500).send("sorry cant register business address : " + `${error}`).end();

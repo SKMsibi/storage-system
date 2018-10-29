@@ -17,5 +17,14 @@ export function submitBusiness(businessData) {
             dispatch({ type: "ERROR_PRESENT" });
         }
     };
-
 };
+export function submitLocation(location) {
+    return async (dispatch) => {
+        try {
+            dispatch({ type: "START_LOCATION_SUBMISSION" });
+            await axios.post('http://localhost:3003/businessLocation', location);
+        } catch (error) {
+            dispatch({ type: "ERROR_LOCATION" });
+        }
+    };
+}

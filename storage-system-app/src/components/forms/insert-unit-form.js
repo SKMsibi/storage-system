@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form'
 
-export class UnitTypeForm extends Component {
+export class UnitForm extends Component {
     render() {
         return (
             <form>
@@ -18,11 +18,7 @@ export class UnitTypeForm extends Component {
         )
     }
 }
-UnitTypeForm = reduxForm({
+UnitForm = reduxForm({
     form: 'InsertUnitForm'
-})(UnitTypeForm)
-
-const mapStateToProps = state => {
-    return { UnitTypeForm: state.form };
-}
-export default connect(mapStateToProps, null)(UnitTypeForm);
+})(UnitForm)
+export default connect(null, null)(UnitForm);

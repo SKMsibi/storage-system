@@ -8,10 +8,10 @@ CREATE TABLE IF NOT EXISTS business (
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS locations (
     id serial PRIMARY KEY,
-    country varchar(150) NOT NULL,
     address1 varchar(150) NOT NULL,
     address2 varchar(150) NOT NULL,
-    address3 varchar(100) NOT NULL,
+    city varchar(100) NOT NULL,
+    region varchar(150) NOT NULL,
     business_id INT REFERENCES business(id) NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
@@ -62,18 +62,18 @@ VALUES
     ('TCG', 'Theo', '071659813', 'Theo@tcg.com');
 INSERT INTO
     locations(
-        country,
         address1,
         address2,
-        address3,
+        city,
+        region,
         business_id
     )
 VALUES
     (
-        'South Africa',
-        'alexander township',
         'corner London road sixth evanue',
         'boikutsong flats block8 no9',
+        'alexander township',
+        'gauteng',
         1
     );
 INSERT INTO
