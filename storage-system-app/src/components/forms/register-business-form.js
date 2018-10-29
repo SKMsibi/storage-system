@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
 import { submitBusiness } from '../../redux/thunks';
 import * as actions from '../../redux/actions';
@@ -14,8 +13,9 @@ export class BusinessForm extends Component {
         this.setState({ shouldRedirect: false })
     }
     async registerBusiness(e) {
-        e.preventDefault()
         this.props.saveBusiness(this.props.businessForm.RegisterBusiness.values);
+        this.props.history.push("/insertBlocks");
+        e.preventDefault();
     }
     render() {
         return (
@@ -29,32 +29,29 @@ export class BusinessForm extends Component {
                 {!this.props.businessState && !this.props.errorPresent && (
                     <div>
                         <h2>Register your business here.</h2>
-                        <form onSubmit={this.registerBusiness}>
+                        <form >
                             <div className="business-info">
                                 <h3>Business Info</h3>
                                 <div className="form-row">
                                     <label htmlFor="firstName">Business Name</label>
-                                    <Field name="businessName" component="input" type="text" />
+                                    <Field name="businessName" component="input" type="text" required={true} />
                                 </div>
                                 <div className="form-row">
                                     <label htmlFor="lastName">Contact Name</label>
-                                    <Field name="contactName" component="input" type="text" />
+                                    <Field name="contactName" component="input" type="text" required={true} />
                                 </div>
                                 <div className="form-row">
                                     <label htmlFor="telephone">Telephone</label>
-                                    <Field name="telephone" component="input" type="tel" />
+                                    <Field name="telephone" component="input" type="tel" required={true} />
                                 </div>
                                 <div className="form-row">
                                     <label htmlFor="email">Email</label>
-                                    <Field name="email" component="input" type="email" />
+                                    <Field name="email" component="input" type="email" required={true} />
                                 </div>
                             </div>
-                            <button>Next</button>
                         </form>
+                        <button onClick={this.registerBusiness} >Next</button>
                     </div>
-                )}
-                {this.props.businessState && !this.props.errorPresent && (
-                    <Redirect to='/insertBlocks' />
                 )}
             </div>
         )
@@ -77,6 +74,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         removeErr: () => {
             dispatch(actions.removeError());
+        },
+        completeSubmission: () => {
+            dispatch({ type: "COMPLETE_SUBMISSIONS" });
         }
     }
 }
