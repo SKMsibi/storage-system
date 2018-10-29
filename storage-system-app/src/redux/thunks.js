@@ -13,9 +13,6 @@ export function submitBusiness(businessData) {
         try {
             await axios.post('http://localhost:3003/businessData', businessData);
             dispatch({ type: "SUBMIT" });
-            setTimeout(() => {
-                dispatch({ type: "COMPLETE_SUBMISSIONS" });
-            }, 1000);
         } catch (error) {
             dispatch({ type: "ERROR_PRESENT" });
         }
