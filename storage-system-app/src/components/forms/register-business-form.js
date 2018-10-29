@@ -13,7 +13,8 @@ export class BusinessForm extends Component {
     componentDidMount = () => {
         this.setState({ shouldRedirect: false })
     }
-    async registerBusiness() {
+    async registerBusiness(e) {
+        e.preventDefault()
         this.props.saveBusiness(this.props.businessForm.RegisterBusiness.values);
     }
     render() {
@@ -28,7 +29,7 @@ export class BusinessForm extends Component {
                 {!this.props.businessState && !this.props.errorPresent && (
                     <div>
                         <h2>Register your business here.</h2>
-                        <form>
+                        <form onSubmit={this.registerBusiness}>
                             <div className="business-info">
                                 <h3>Business Info</h3>
                                 <div className="form-row">
@@ -48,8 +49,8 @@ export class BusinessForm extends Component {
                                     <Field name="email" component="input" type="email" />
                                 </div>
                             </div>
+                            <button>Next</button>
                         </form>
-                        <button onClick={this.registerBusiness}>Next</button>
                     </div>
                 )}
                 {this.props.businessState && !this.props.errorPresent && (
