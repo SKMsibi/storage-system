@@ -7,7 +7,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-container">
-          <BusinessForm />
+          <BusinessForm {...this.props} />
         </div>
       </div>
     );
