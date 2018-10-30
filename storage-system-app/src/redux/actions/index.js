@@ -6,4 +6,8 @@ export function changeSelectedBusiness(name) {
 };
 export function removeError() {
     return { type: "ERROR_NOT_PRESENT" };
+};
+export function getBusinessesWithLocation(businesses) {
+    return { type: "SET_BUSINESSES", newValue: businesses };
+
 }
