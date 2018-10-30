@@ -38,3 +38,13 @@ export function getAllBusinessesWithLocations() {
         }
     };
 };
+export function getBusinessLocations(business) {
+    return async (dispatch) => {
+        try {
+            var allBusinessLocations = await axios.get('http://localhost:3003/locationsForBusiness/' + business);
+            dispatch(actions.changeBusinessLocationsInBlocks(allBusinessLocations.data))
+        } catch (error) {
+            dispatch({ type: "ERROR_CREATED" });
+        }
+    };
+};
