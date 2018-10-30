@@ -17,8 +17,15 @@ async function getAllBusinessNames() {
 };
 async function getAllBusinessWithLocations() {
   const businessNames = await client.query(`SELECT name FROM business INNER JOIN locations on business.id = locations.business_id;`);
+  var validBusinesses = [];
+  businessNames.rows.forEach(element => {
+    var businessFound = validBusinesses.find(item => item.name === element.name);
+    if (!businessFound) {
+      validBusinesses.push(element);
+    };
+  });
+  return validBusinesses;
   // await client.end();
-  return businessNames.rows;
 };
 async function insertBusinessLocation(businessName, address1, address2, city, region) {
   const businessId = await client.query(`SELECT id FROM business WHERE name = $1;`, [businessName]);
