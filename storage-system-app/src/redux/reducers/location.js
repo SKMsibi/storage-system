@@ -1,6 +1,4 @@
 export default function location(state = {
-    allBusinesses: [],
-    selectedBusiness: "",
     submittingLocation: false,
     LocationSubmitted: false,
     errorOnSubmitting: false
