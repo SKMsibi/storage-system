@@ -48,3 +48,13 @@ export function getBusinessLocations(business) {
         }
     };
 };
+export function submitBlocks(blocks, businessName, location) {
+    return async (dispatch) => {
+        try {
+            await axios.post('http://localhost:3003/submitBlocks', { formValues: blocks, businessName: businessName, selectedLocation: location });
+        } catch (error) {
+            console.log('error :', error);
+            dispatch({ type: "ERROR_CREATED" });
+        }
+    };
+};
