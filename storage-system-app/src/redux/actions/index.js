@@ -14,6 +14,9 @@ export function getBusinessesWithLocation(businesses) {
 export function changeSelectedBusinessInBlocks(newBusiness) {
     return { type: "CHANGE_SELECTED_BUSINESS", newValue: newBusiness }
 }
-export function changeBusinessLocationsInBlocks(location) {
-    return { type: "CHANGE_SELECTED_BUSINESS_LOCATIONS", newValue: location }
+export function changeBusinessLocationsInBlocks(locations) {
+    return { type: "CHANGE_SELECTED_BUSINESS_LOCATIONS", newValue: locations }
+}
+export function changeLocationsInBlocks(location) {
+    return { type: "CHANGE_SELECTED_LOCATIONS", newValue: location }
 }
