@@ -27,4 +27,14 @@ export function submitLocation(location) {
             dispatch({ type: "ERROR_LOCATION" });
         }
     };
-}
+};
+export function getAllBusinessesWithLocations() {
+    return async (dispatch) => {
+        try {
+            var allTheBusiness = await axios.get('http://localhost:3003/businessesWithLocations');
+            dispatch(actions.getBusinessesWithLocation(allTheBusiness.data))
+        } catch (error) {
+            dispatch({ type: "ERROR_CREATED" });
+        }
+    };
+};
