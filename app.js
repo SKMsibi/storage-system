@@ -39,7 +39,7 @@ async function insertBusinessInfo(businessName, contactName, telephone, email) {
 };
 async function insertBlocks(params) {
   var location = params.selectedLocation.split(",");
-  const businessId = await client.query('SELECT id FROM locations WHERE country = $1 AND address1 = $2 AND address2 = $3 AND address3 = $4', location);
+  const businessId = await client.query('SELECT id FROM locations WHERE region = $4 AND address1 = $1 AND address2 = $2 AND city = $3', location);
   for (let iterator in params.formValues) {
     await client.query("INSERT INTO blocks(name, locations_id) VALUES ($1, $2);", [params.formValues[iterator], businessId.rows[0].id]);
   }
@@ -149,6 +149,7 @@ app.post('/businessLocation', async function (req, res) {
     insertBusinessLocation(req.body.businessName, req.body.address1, req.body.address2, req.body.city, req.body.region);
     res.status(201).end();
   } catch (error) {
+    console.log('error :', error);
     res.status(500).send("sorry cant register business address : " + `${error}`).end();
   }
 });
@@ -157,7 +158,7 @@ app.post('/submitBlocks', async function (req, res) {
     await insertBlocks(req.body);
     res.status(201).end();
   } catch (error) {
-
+    console.log('error :', error);
     res.status(500).send("sorry cant register business address : " + `${error}`).end();
   }
 });
