@@ -83,7 +83,7 @@ export class RegisterBlocks extends Component {
                             <select ref="location" onChange={() => this.handleLocationSelection()}>
                                 <option value="Select location">Select location</option>
                                 {this.state.allBusinessLocations.map(singleLocation => {
-                                    return <option key={this.state.allBusinessLocations.indexOf(singleLocation)} value={`${singleLocation.country},${singleLocation.address1},${singleLocation.address2},${singleLocation.address3}`}>{singleLocation.country}, {singleLocation.address1}, {singleLocation.address2}, {singleLocation.address3}</option>
+                                    return <option key={this.state.allBusinessLocations.indexOf(singleLocation)} value={`${singleLocation.address1},${singleLocation.address2},${singleLocation.city},${singleLocation.region}`}>{singleLocation.address1}, {singleLocation.address2}, {singleLocation.city}, {singleLocation.region}</option>
                                 })}
                             </select>
                         </div>
