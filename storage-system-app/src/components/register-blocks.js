@@ -3,21 +3,19 @@ import axios from 'axios';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import BlockForm from './forms/insert-block-form';
-import { getAllBusinessesWithLocations } from '../redux/thunks'
+import { getAllBusinessesWithLocations, getBusinessLocations } from '../redux/thunks'
 import '../App.css';
 import Redirect from 'react-router-dom/Redirect';
+import * as actions from '../redux/actions';
 
 export class RegisterBlocks extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            allBusinessLocations: [],
-            allBusiness: [],
             showForm: false,
             numberOfBlocks: 1,
             blocks: [],
             showBlocksInsert: false,
-            selectedBusiness: "",
             selectedLocation: "",
             selectedLocationId: null,
             shouldRedirect: false
@@ -51,9 +49,10 @@ export class RegisterBlocks extends Component {
         if (this.refs.select.value === "Select Business") {
             this.setState({ showLocationDropDown: false })
         } else {
+            this.props.changeSelectedBusiness(this.refs.select.value)
             setTimeout(async () => {
-                var allBusinessLocations = await axios.get('http://localhost:3003/locationsForBusiness/' + this.refs.select.value);
-                this.setState({ showLocationDropDown: true, allBusinessLocations: allBusinessLocations.data })
+                this.props.changeBusinessLocation(this.props.selectedBusiness)
+                this.setState({ showLocationDropDown: true })
             }, 1000);
         }
     }
@@ -72,7 +71,7 @@ export class RegisterBlocks extends Component {
                     <select ref="select" onChange={() => this.handleBusinessSelection()}>
                         <option value="Select Business">Select Business</option>
                         {this.props.businesses.map(singleBusiness => {
-                            return <option key={this.state.allBusiness.indexOf(singleBusiness)} value={singleBusiness.name}>{singleBusiness.name}</option>
+                            return <option key={this.props.businesses.indexOf(singleBusiness)} value={singleBusiness.name}>{singleBusiness.name}</option>
                         })}
                     </select>
                     {this.state.showLocationDropDown && (
@@ -82,8 +81,8 @@ export class RegisterBlocks extends Component {
                         <div>
                             <select ref="location" onChange={() => this.handleLocationSelection()}>
                                 <option value="Select location">Select location</option>
-                                {this.state.allBusinessLocations.map(singleLocation => {
-                                    return <option key={this.state.allBusinessLocations.indexOf(singleLocation)} value={`${singleLocation.address1},${singleLocation.address2},${singleLocation.city},${singleLocation.region}`}>{singleLocation.address1}, {singleLocation.address2}, {singleLocation.city}, {singleLocation.region}</option>
+                                {this.props.locations.map(singleLocation => {
+                                    return <option key={this.props.locations.indexOf(singleLocation)} value={`${singleLocation.address1},${singleLocation.address2},${singleLocation.city},${singleLocation.region}`}>{singleLocation.address1}, {singleLocation.address2}, {singleLocation.city}, {singleLocation.region}</option>
                                 })}
                             </select>
                         </div>
@@ -113,14 +112,23 @@ export class RegisterBlocks extends Component {
 
 const mapStateToProps = state => {
     return {
+        state: state,
         blocksData: state.form,
-        businesses: state.blocks.allBusinessWithLocation
+        businesses: state.blocks.allBusinessWithLocation,
+        selectedBusiness: state.blocks.selectedBusiness,
+        locations: state.blocks.selectedBusinessLocations
     };
 }
 const mapDispatchToProps = (dispatch) => {
     return {
         getBusinesses: () => {
             dispatch(getAllBusinessesWithLocations())
+        },
+        changeSelectedBusiness: (newBusiness) => {
+            dispatch(actions.changeSelectedBusinessInBlocks(newBusiness))
+        },
+        changeBusinessLocation: (business) => {
+            dispatch(getBusinessLocations(business))
         }
     }
 }
