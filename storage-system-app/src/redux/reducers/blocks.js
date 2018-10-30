@@ -2,6 +2,7 @@ export default function blocks(state = {
     allBusinessWithLocation: [],
     selectedBusiness: null,
     selectedBusinessLocations: [],
+    selectLocation: null,
     errorPresent: false
 }, action) {
     var newState = { ...state }
@@ -14,6 +15,9 @@ export default function blocks(state = {
             break;
         case "CHANGE_SELECTED_BUSINESS_LOCATIONS":
             newState = { ...newState, selectedBusinessLocations: action.newValue };
+            break;
+        case "CHANGE_SELECTED_LOCATIONS":
+            newState = { ...newState, selectLocation: action.newValue };
             break;
         case "ERROR_CREATED":
             newState = { ...newState, errorPresent: true };
