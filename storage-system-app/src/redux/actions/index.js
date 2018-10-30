@@ -10,4 +10,10 @@ export function removeError() {
 export function getBusinessesWithLocation(businesses) {
     return { type: "SET_BUSINESSES", newValue: businesses };
 
+};
+export function changeSelectedBusinessInBlocks(newBusiness) {
+    return { type: "CHANGE_SELECTED_BUSINESS", newValue: newBusiness }
+}
+export function changeBusinessLocationsInBlocks(location) {
+    return { type: "CHANGE_SELECTED_BUSINESS_LOCATIONS", newValue: location }
 }
