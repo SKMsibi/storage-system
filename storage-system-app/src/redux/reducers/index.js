@@ -1,10 +1,12 @@
 import { reducer as formReducer } from 'redux-form'
 import business from './business';
 import location from './location'
+import blocks from './blocks'
 import { combineReducers } from 'redux'
 
 export default combineReducers({
     form: formReducer,
     business: business,
-    location: location
+    location: location,
+    blocks: blocks
 });
