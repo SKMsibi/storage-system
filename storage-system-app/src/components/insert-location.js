@@ -5,7 +5,6 @@ import InsertLocationForm from './forms/insert-location-form';
 import * as actions from '../redux/actions';
 import { getBusinesses, submitLocation } from '../redux/thunks'
 
-
 export class InsertLocation extends Component {
     constructor() {
         super();
@@ -64,7 +63,6 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-
         getBusinesses: () => {
             dispatch(getBusinesses())
         },
