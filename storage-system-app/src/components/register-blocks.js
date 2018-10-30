@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import BlockForm from './forms/insert-block-form';
+import { getAllBusinessesWithLocations } from '../redux/thunks'
 import '../App.css';
 import Redirect from 'react-router-dom/Redirect';
 
@@ -26,8 +27,7 @@ export class RegisterBlocks extends Component {
         this.submitBlocks = this.submitBlocks.bind(this);
     }
     async componentDidMount() {
-        var allTheBusiness = await axios.get('http://localhost:3003/businessesWithLocations');
-        this.setState({ allBusiness: allTheBusiness.data });
+        this.props.getBusinesses();
     }
     handleChange(event) {
         this.setState({ numberOfBlocks: event.target.value, showBlocksInsert: false });
@@ -71,7 +71,7 @@ export class RegisterBlocks extends Component {
                     <h4>Select the business you want to insert Blocks for.</h4>
                     <select ref="select" onChange={() => this.handleBusinessSelection()}>
                         <option value="Select Business">Select Business</option>
-                        {this.state.allBusiness.map(singleBusiness => {
+                        {this.props.businesses.map(singleBusiness => {
                             return <option key={this.state.allBusiness.indexOf(singleBusiness)} value={singleBusiness.name}>{singleBusiness.name}</option>
                         })}
                     </select>
@@ -112,6 +112,16 @@ export class RegisterBlocks extends Component {
 }
 
 const mapStateToProps = state => {
-    return { blocksData: state.form };
+    return {
+        blocksData: state.form,
+        businesses: state.blocks.allBusinessWithLocation
+    };
 }
-export default connect(mapStateToProps, null)(RegisterBlocks);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getBusinesses: () => {
+            dispatch(getAllBusinessesWithLocations())
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterBlocks);
