@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import BlockForm from './forms/insert-block-form';
-import { getAllBusinessesWithLocations, getBusinessLocations } from '../redux/thunks'
+import { getAllBusinessesWithLocations, getBusinessLocations, submitBlocks } from '../redux/thunks'
 import '../App.css';
-import Redirect from 'react-router-dom/Redirect';
 import * as actions from '../redux/actions';
 
 export class RegisterBlocks extends Component {
@@ -16,15 +14,14 @@ export class RegisterBlocks extends Component {
             numberOfBlocks: 1,
             blocks: [],
             showBlocksInsert: false,
-            selectedLocation: "",
-            selectedLocationId: null,
-            shouldRedirect: false
         }
         this.handleChange = this.handleChange.bind(this);
         this.createBlockForms = this.createBlockForms.bind(this);
         this.submitBlocks = this.submitBlocks.bind(this);
+        this.handleBusinessSelection = this.handleBusinessSelection.bind(this);
+        this.handleLocationSelection = this.handleLocationSelection.bind(this);
     }
-    async componentDidMount() {
+    componentDidMount() {
         this.props.getBusinesses();
     }
     handleChange(event) {
@@ -37,20 +34,16 @@ export class RegisterBlocks extends Component {
         }
         this.setState({ blocks: arrTemp, showBlocksInsert: true })
     }
-    async submitBlocks() {
-        var sendingBlocks = await axios.post('http://localhost:3003/submitBlocks', { formValues: this.props.blocksData.InsertBlockForm.values, businessName: this.state.selectedBusiness, selectedLocation: this.state.selectedLocation });
-        if (sendingBlocks.status === 201) {
-            this.setState({ shouldRedirect: true })
-        } else {
-            this.setState({ error: true, errorMessage: sendingBlocks.data })
-        }
+    submitBlocks() {
+        this.props.submitBlocks(this.props.blocksData.InsertBlockForm.values, this.props.selectedBusiness, this.props.selectLocation);
+        this.props.history.push("/insertUnitType");
     }
     handleBusinessSelection() {
         if (this.refs.select.value === "Select Business") {
             this.setState({ showLocationDropDown: false })
         } else {
             this.props.changeSelectedBusiness(this.refs.select.value)
-            setTimeout(async () => {
+            setTimeout(() => {
                 this.props.changeBusinessLocation(this.props.selectedBusiness)
                 this.setState({ showLocationDropDown: true })
             }, 1000);
@@ -60,6 +53,7 @@ export class RegisterBlocks extends Component {
         if (this.refs.location.value === "Select location") {
             this.setState({ showForm: false })
         } else {
+            this.props.changeLocation(this.refs.location.value);
             this.setState({ showForm: true, selectedLocation: this.refs.location.value })
         }
     }
@@ -67,24 +61,26 @@ export class RegisterBlocks extends Component {
         return (
             <div className="register-blocks">
                 <div className="App-container">
-                    <h4>Select the business you want to insert Blocks for.</h4>
-                    <select ref="select" onChange={() => this.handleBusinessSelection()}>
-                        <option value="Select Business">Select Business</option>
-                        {this.props.businesses.map(singleBusiness => {
-                            return <option key={this.props.businesses.indexOf(singleBusiness)} value={singleBusiness.name}>{singleBusiness.name}</option>
-                        })}
-                    </select>
-                    {this.state.showLocationDropDown && (
-                        <h4>Select the location the Blocks.</h4>
-                    )}
-                    {this.state.showLocationDropDown && (
-                        <div>
-                            <select ref="location" onChange={() => this.handleLocationSelection()}>
-                                <option value="Select location">Select location</option>
-                                {this.props.locations.map(singleLocation => {
-                                    return <option key={this.props.locations.indexOf(singleLocation)} value={`${singleLocation.address1},${singleLocation.address2},${singleLocation.city},${singleLocation.region}`}>{singleLocation.address1}, {singleLocation.address2}, {singleLocation.city}, {singleLocation.region}</option>
+                    {!this.state.showForm && (
+                        <div className="register-location">
+                            <h4>Select the business you want to insert Blocks for.</h4>
+                            <select ref="select" onChange={this.handleBusinessSelection}>
+                                <option value="Select Business">Select Business</option>
+                                {this.props.businesses.map(singleBusiness => {
+                                    return <option key={this.props.businesses.indexOf(singleBusiness)} value={singleBusiness.name}>{singleBusiness.name}</option>
                                 })}
                             </select>
+                            {this.state.showLocationDropDown && (
+                                <h4>Select the location the Blocks.</h4>
+                            )}
+                            {this.state.showLocationDropDown && (
+                                <select ref="location" onChange={this.handleLocationSelection}>
+                                    <option value="Select location">Select location</option>
+                                    {this.props.locations.map(singleLocation => {
+                                        return <option key={this.props.locations.indexOf(singleLocation)} value={`${singleLocation.address1},${singleLocation.address2},${singleLocation.city},${singleLocation.region}`}>{singleLocation.address1}, {singleLocation.address2}, {singleLocation.city}, {singleLocation.region}</option>
+                                    })}
+                                </select>
+                            )}
                         </div>
                     )}
                     {this.state.showForm && (
@@ -100,9 +96,6 @@ export class RegisterBlocks extends Component {
                             )}
                         </div>
                     )}
-                    {this.state.shouldRedirect && (
-                        <Redirect to='/insertUnitType' />
-                    )}
                     <Link to="/"><button>back</button></Link>
                 </div>
             </div >
@@ -116,7 +109,8 @@ const mapStateToProps = state => {
         blocksData: state.form,
         businesses: state.blocks.allBusinessWithLocation,
         selectedBusiness: state.blocks.selectedBusiness,
-        locations: state.blocks.selectedBusinessLocations
+        locations: state.blocks.selectedBusinessLocations,
+        selectLocation: state.blocks.selectLocation
     };
 }
 const mapDispatchToProps = (dispatch) => {
@@ -129,6 +123,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         changeBusinessLocation: (business) => {
             dispatch(getBusinessLocations(business))
+        },
+        changeLocation: (location) => {
+            dispatch(actions.changeLocationsInBlocks(location))
+        },
+        submitBlocks: (blocksValues, businessName, location) => {
+            dispatch(submitBlocks(blocksValues, businessName, location))
         }
     }
 }
