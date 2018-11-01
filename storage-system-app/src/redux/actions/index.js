@@ -29,3 +29,6 @@ export function submittingNewUnitType() {
 export function completeNewUnitTypeSubmitting() {
     return { type: "COMPLETE_NEW_TYPE_SUBMISSION" }
 };
+export function getBlocksForUnit(blocks) {
+    return { type: "SET_BLOCKS", newValue: blocks }
+};
