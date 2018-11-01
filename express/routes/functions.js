@@ -79,7 +79,15 @@ async function getUnits(params) {
     }
     return allUnits;
 };
+async function insertUniteType(params) {
+    var { businessName, typeName, height, length, width } = params;
+    console.log('params :', businessName, typeName, height, length, width);
+    const businessId = await client.query('SELECT id FROM business WHERE name = $1;', [businessName]);
+    await client.query(`INSERT INTO Unit_types(name,business_id,length,width,height)VALUES($1,$2,$3,$4,$5);`, [typeName, businessId.rows[0].id, +length, +width, +height]);
+};
+
 module.exports = {
+    insertUniteType,
     getAllBusinessNames,
     getAllBusinessWithLocations,
     insertBusinessLocation,
