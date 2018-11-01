@@ -13,10 +13,19 @@ export function getBusinessesWithLocation(businesses) {
 };
 export function changeSelectedBusinessInBlocks(newBusiness) {
     return { type: "CHANGE_SELECTED_BUSINESS", newValue: newBusiness }
-}
+};
 export function changeBusinessLocationsInBlocks(locations) {
     return { type: "CHANGE_SELECTED_BUSINESS_LOCATIONS", newValue: locations }
-}
+};
 export function changeLocationsInBlocks(location) {
     return { type: "CHANGE_SELECTED_LOCATIONS", newValue: location }
-}
+};
+export function changeUnitTypes(types) {
+    return { type: "SET_UNIT_TYPES", newValue: types }
+};
+export function submittingNewUnitType() {
+    return { type: "START_NEW_TYPE_SUBMISSION" }
+};
+export function completeNewUnitTypeSubmitting() {
+    return { type: "COMPLETE_NEW_TYPE_SUBMISSION" }
+};
