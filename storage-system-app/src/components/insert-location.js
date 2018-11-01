@@ -16,10 +16,10 @@ export class InsertLocation extends Component {
         this.submitData = this.submitData.bind(this);
         this.handleSection = this.handleSection.bind(this);
     }
-    async componentDidMount() {
+     componentDidMount() {
         this.props.getBusinesses();
     }
-    async submitData() {
+     submitData() {
         this.props.saveLocation({ ...this.props.formData.values, businessName: this.state.selectedBusiness });
         this.props.completeSubmission();
         this.props.history.push("/insertBlocks");
