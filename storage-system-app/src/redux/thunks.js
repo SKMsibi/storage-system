@@ -58,6 +58,17 @@ export function submitBlocks(blocks, businessName, location) {
         }
     };
 };
+export function getAllBlocks(businessName) {
+    return async (dispatch) => {
+        try {
+            var allBlocks = await axios.get('http://localhost:3003/blocks/' + businessName);
+            dispatch(actions.getBlocksForUnit(allBlocks.data));
+        } catch (error) {
+            console.log('error :', error);
+            dispatch({ type: "ERROR_CREATED" });
+        }
+    };
+};
 export function getAllUnitTypes() {
     return async (dispatch) => {
         try {
