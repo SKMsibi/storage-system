@@ -9,7 +9,9 @@ app.use(bodyParser.json());
 var connectionString = "postgres://sabelo:1230skm@localhost:5432/storage_system";
 const client = new pg.Client(connectionString);
 client.connect();
-var helper = require('./routes/functions')
+
+var helper = require('./routes/functions');
+
 app.post('/businessData', async function (req, res) {
   try {
     await helper.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email)
@@ -40,6 +42,14 @@ app.get('/unitTypes', async function (req, res) {
   try {
     const units = await client.query(`SELECT name, length, width, height FROM unit_types;`);
     res.send(units.rows).status(201).end();
+  } catch (error) {
+    res.status(500).end();
+  }
+});
+app.post('/unitTypes', async function (req, res) {
+  try {
+    helper.insertUniteType(req.body)
+    res.status(201).end();
   } catch (error) {
     res.status(500).end();
   }
