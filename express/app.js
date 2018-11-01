@@ -11,7 +11,6 @@ const client = new pg.Client(connectionString);
 client.connect();
 
 var helper = require('./routes/functions');
-
 app.post('/businessData', async function (req, res) {
   try {
     await helper.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email)
@@ -94,6 +93,15 @@ app.post('/submitBlocks', async function (req, res) {
   } catch (error) {
     console.log('error :', error);
     res.status(500).send("sorry cant register business address : " + `${error}`).end();
+  }
+});
+app.get('/blocks/:businessName', async function (req, res) {
+  try {
+    var businessName = req.params["businessName"];
+    var allBlocks = await helper.getAllBlocks(businessName)
+    res.status(201).send(allBlocks).end()
+  } catch (error) {
+    res.status(500).end()
   }
 });
 app.listen(3003, function () {
