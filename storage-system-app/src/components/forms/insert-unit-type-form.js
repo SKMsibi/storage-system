@@ -14,15 +14,15 @@ class InsertUnitTypeForm extends Component {
                     </div>
                     <div className="form-row">
                         <label htmlFor='height'>Height</label>
-                        <Field name='height' component="input" min="1" placeholder="example(255)" type="number" required={true} />
+                        <Field name='height' component="input" min="1" placeholder="example(25)" type="number" required={true} />
                     </div>
                     <div className="form-row">
                         <label htmlFor='length'>Length</label>
-                        <Field name='length' component="input" min="1" placeholder="example(255)" type="number" required={true} />
+                        <Field name='length' component="input" min="1" placeholder="example(20)" type="number" required={true} />
                     </div>
                     <div className="form-row">
                         <label htmlFor='width'>Width</label>
-                        <Field name='width' component="input" min="1" placeholder="example(255)" type="number" required={true} />
+                        <Field name='width' component="input" min="1" placeholder="example(30)" type="number" required={true} />
                     </div>
                     <button>submit</button>
                 </form>
