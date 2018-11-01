@@ -1,7 +1,8 @@
 export default function unitType(state = {
     allUnitTypes: [],
     typeSubmitted: false,
-    typeSubmitting: false
+    typeSubmitting: false,
+    allBlocks: []
 }, action) {
     var newState = { ...state }
     switch (action.type) {
@@ -13,6 +14,9 @@ export default function unitType(state = {
             break;
         case "COMPLETE_NEW_TYPE_SUBMISSION":
             newState = { ...newState, typeSubmitting: false, typeSubmitted: true };
+            break;
+        case "SET_BLOCKS":
+            newState = { ...newState, allBlocks: action.newValue };
             break;
         default:
             newState = { ...state }
