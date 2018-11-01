@@ -85,6 +85,10 @@ async function insertUniteType(params) {
     const businessId = await client.query('SELECT id FROM business WHERE name = $1;', [businessName]);
     await client.query(`INSERT INTO Unit_types(name,business_id,length,width,height)VALUES($1,$2,$3,$4,$5);`, [typeName, businessId.rows[0].id, +length, +width, +height]);
 };
+async function getAllBlocks(businessName) {
+    const blocks = await client.query('SELECT blocks.name FROM blocks INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE business.name = $1', [businessName]);
+    return blocks.rows
+};
 
 module.exports = {
     insertUniteType,
@@ -99,5 +103,6 @@ module.exports = {
     getAllLocationsForABusiness,
     getAllMatchingLocations,
     getAllUnitsByLocation,
-    getUnits
+    getUnits,
+    getAllBlocks
 }  
