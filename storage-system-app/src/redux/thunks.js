@@ -58,3 +58,26 @@ export function submitBlocks(blocks, businessName, location) {
         }
     };
 };
+export function getAllUnitTypes() {
+    return async (dispatch) => {
+        try {
+            var allAvailableUnitTypes = await axios.get('http://localhost:3003/unitTypes');
+            dispatch(actions.changeUnitTypes(allAvailableUnitTypes.data));
+        } catch (error) {
+            console.log('error :', error);
+            dispatch({ type: "ERROR_CREATED" });
+        }
+    };
+};
+export function submitAUnitType(typeValues) {
+    return async (dispatch) => {
+        try {
+            dispatch(actions.submittingNewUnitType());
+            await axios.post('http://localhost:3003/unitTypes', typeValues);
+            dispatch(actions.completeNewUnitTypeSubmitting());
+        } catch (error) {
+            console.log('error :', error);
+            dispatch({ type: "ERROR_CREATED" });
+        }
+    };
+};
