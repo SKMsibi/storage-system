@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { UnitForm } from "./forms/insert-unit-form";
-import { getAllUnitTypes, submitAUnitType, getBusinesses } from '../redux/thunks';
+import { getAllUnitTypes, submitAUnitType, getBusinesses, getAllBlocks } from '../redux/thunks';
 import InsertUnitTypeForm from './forms/insert-unit-type-form'
 import '../App.css';
 
@@ -28,8 +28,9 @@ class InsertUnit extends Component {
         this.setState({ showTypeForm: true, showForm: false });
     };
     async addUnitType(e) {
-        console.log('this.state.selectedBusiness :', this.state);
         this.props.submitNewUnitType({ ...this.props.unitTypeValues.values, businessName: this.state.selectedBusiness })
+        this.setState({ showTypeForm: false });
+        this.props.getUnitTypes();
         e.preventDefault()
     };
     handleBusinessSection(e) {
@@ -44,6 +45,7 @@ class InsertUnit extends Component {
             this.setState({ showForm: false })
         } else {
             this.setState({ selectedType: e.target.value, showForm: true, showTypeForm: false })
+            this.props.getAllBlocks(this.state.selectedBusiness)
         }
     };
     render() {
@@ -59,18 +61,21 @@ class InsertUnit extends Component {
                     </select>
                     <h4> Select the unit type of the unit or Add a new one.</h4>
                     <div>
-                        <select onChange={this.handleTypeSelect}>
+                        <select ref="unitType" onChange={this.handleTypeSelect}>
                             <option value="select unit type">Type name (height, length, width)</option>
                             {this.props.allUnitTypes.map(singleType => {
-                                return <option key={this.state.allTypes.indexOf(singleType)} value={`${singleType.name},${singleType.height},${singleType.length},${singleType.width}`}>{singleType.name} ({singleType.height}, {singleType.length}, {singleType.width})</option>
+                                return <option key={this.props.allUnitTypes.indexOf(singleType)} value={`${singleType.name},${singleType.height},${singleType.length},${singleType.width}`}>{singleType.name} ({singleType.height}, {singleType.length}, {singleType.width})</option>
                             })}
                         </select><button onClick={this.showUnitTypeForm}>Add Type</button>
                     </div>
                     {this.state.showForm && (
-                        <UnitForm />
+                        <UnitForm allBlocks={this.props.allBlocks} />
                     )}
                     {this.state.showTypeForm && (
-                        <InsertUnitTypeForm submitFunction={this.addUnitType} />
+                        <div>
+                            <h4>All units of measurement are in square metres</h4>
+                            <InsertUnitTypeForm submitFunction={this.addUnitType} />
+                        </div>
                     )}
                 </div>
             </div>
@@ -83,6 +88,7 @@ const mapStateToProps = (state) => {
         allUnitTypes: state.unitType.allUnitTypes,
         unitTypeValues: state.form.InsertUnitTypeForm,
         businesses: state.business,
+        allBlocks: state.unitType.allBlocks
     }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -95,6 +101,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         submitNewUnitType: (values) => {
             dispatch(submitAUnitType(values))
+        },
+        getAllBlocks: (businessName) => {
+            dispatch(getAllBlocks(businessName))
         }
     }
 }
