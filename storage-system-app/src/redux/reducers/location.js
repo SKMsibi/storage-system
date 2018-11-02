@@ -11,7 +11,7 @@ export default function location(state = {
         case "COMPLETE_LOCATION_SUBMISSION":
             newState = { ...newState, LocationSubmitted: true, submittingLocation: false };
             break;
-        case "ERROR_LOCATION":
+        case "ERROR_CREATED":
             newState = { ...newState, LocationSubmitted: false, submittingLocation: false };
             break;
         default:
