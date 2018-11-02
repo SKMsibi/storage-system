@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS business (
     id serial PRIMARY KEY,
     name varchar(100) NOT NULL,
     unit_type_id INT REFERENCES Unit_types(id) NOT NULL,
+    block_id INT REFERENCES blocks(id) NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS clients(
