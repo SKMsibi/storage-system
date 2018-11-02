@@ -18,7 +18,7 @@ export default function FormState(state = {
         case "COMPLETE_SUBMISSIONS":
             newState = { ...newState, businessSubmitted: false };
             break;
-        case "ERROR_PRESENT":
+        case "ERROR_CREATED":
             newState = { ...newState, errorOnSubmitting: true };
             break;
         case "ERROR_NOT_PRESENT":
