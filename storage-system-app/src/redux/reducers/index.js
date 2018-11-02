@@ -3,6 +3,7 @@ import business from './business';
 import location from './location';
 import blocks from './blocks';
 import unitType from './unit-types';
+import unit from './unit'
 import { combineReducers } from 'redux';
 
 export default combineReducers({
@@ -10,5 +11,6 @@ export default combineReducers({
     business: business,
     location: location,
     unitType: unitType,
-    blocks: blocks
+    blocks: blocks,
+    unit: unit
 });
