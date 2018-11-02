@@ -47,7 +47,7 @@ app.get('/unitTypes', async function (req, res) {
 });
 app.post('/unitTypes', async function (req, res) {
   try {
-    helper.insertUniteType(req.body)
+    helper.insertUnitType(req.body)
     res.status(201).end();
   } catch (error) {
     res.status(500).end();
@@ -74,9 +74,20 @@ app.get('/allUnits/:searchBy/:searchPhrase', async function (req, res) {
     var allUnits = await helper.getUnits(req.params);
     res.status(201).send(allUnits).end()
   } catch (error) {
+    console.log('error :', error);
     res.status(500).end()
   }
 });
+app.post('/Unit', async function (req, res) {
+  try {
+    await helper.submitUnit(req.body);
+    res.status(201).end()
+  } catch (error) {
+    console.log('error :', error);
+    res.status(500).end()
+  }
+});
+
 app.post('/businessLocation', async function (req, res) {
   try {
     helper.insertBusinessLocation(req.body.businessName, req.body.address1, req.body.address2, req.body.city, req.body.region);
