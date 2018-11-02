@@ -79,19 +79,30 @@ async function getUnits(params) {
     }
     return allUnits;
 };
-async function insertUniteType(params) {
+async function insertUnitType(params) {
     var { businessName, typeName, height, length, width } = params;
-    console.log('params :', businessName, typeName, height, length, width);
     const businessId = await client.query('SELECT id FROM business WHERE name = $1;', [businessName]);
-    await client.query(`INSERT INTO Unit_types(name,business_id,length,width,height)VALUES($1,$2,$3,$4,$5);`, [typeName, businessId.rows[0].id, +length, +width, +height]);
+    await client.query('INSERT INTO Unit_types(name,business_id,length,width,height)VALUES($1,$2,$3,$4,$5);', [typeName, businessId.rows[0].id, +length, +width, +height]);
 };
 async function getAllBlocks(businessName) {
     const blocks = await client.query('SELECT blocks.name FROM blocks INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE business.name = $1', [businessName]);
     return blocks.rows
 };
-
+async function submitUnit(params) {
+    var { unitName, blockName, selectedBusiness, unitType } = params;
+    var unitTypeValue = unitType.split(",");
+    const blockId = await client.query('SELECT blocks.id FROM blocks INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE blocks.name = $1 AND business.name = $2;', [blockName, selectedBusiness]);
+    const unitTypeId = await client.query('SELECT id FROM unit_types WHERE name=$1 AND height=$2 AND length=$3 AND width=$4;', unitTypeValue);
+    console.log('blockId,unitTypeId :', unitName, blockId.rows[0].id, unitTypeId.rows[0].id);
+    try {
+        await client.query('INSERT INTO units(name, unit_type_id, block_id)VALUES($1,$2,$3);', [unitName, unitTypeId.rows[0].id], blockId.rows[0].id);
+    } catch (error) {
+        console.log('error :', error);
+    }
+};
 module.exports = {
-    insertUniteType,
+    submitUnit,
+    insertUnitType,
     getAllBusinessNames,
     getAllBusinessWithLocations,
     insertBusinessLocation,
