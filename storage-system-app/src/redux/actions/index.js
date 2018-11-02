@@ -23,6 +23,9 @@ export function changeLocationsInBlocks(location) {
 export function changeUnitTypes(types) {
     return { type: "SET_UNIT_TYPES", newValue: types }
 };
+export function setSelectedType(type) {
+    return { type: "SET_SELECTED_UNIT_TYPE", newValue: type }
+};
 export function submittingNewUnitType() {
     return { type: "START_NEW_TYPE_SUBMISSION" }
 };
@@ -32,3 +35,10 @@ export function completeNewUnitTypeSubmitting() {
 export function getBlocksForUnit(blocks) {
     return { type: "SET_BLOCKS", newValue: blocks }
 };
+export function submittingUnit() {
+    return { type: "START_UNIT_SUBMISSION" }
+};
+export function completeUnitSubmission() {
+    return { type: "COMPLETE_UNIT_SUBMISSION" }
+};
+
