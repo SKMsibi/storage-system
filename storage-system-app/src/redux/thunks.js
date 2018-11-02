@@ -14,7 +14,7 @@ export function submitBusiness(businessData) {
             await axios.post('http://localhost:3003/businessData', businessData);
             dispatch({ type: "SUBMIT" });
         } catch (error) {
-            dispatch({ type: "ERROR_PRESENT" });
+            dispatch({ type: "ERROR_CREATED" });
         }
     };
 };
@@ -24,7 +24,7 @@ export function submitLocation(location) {
             dispatch({ type: "START_LOCATION_SUBMISSION" });
             await axios.post('http://localhost:3003/businessLocation', location);
         } catch (error) {
-            dispatch({ type: "ERROR_LOCATION" });
+            dispatch({ type: "ERROR_CREATED" });
         }
     };
 };
@@ -86,6 +86,18 @@ export function submitAUnitType(typeValues) {
             dispatch(actions.submittingNewUnitType());
             await axios.post('http://localhost:3003/unitTypes', typeValues);
             dispatch(actions.completeNewUnitTypeSubmitting());
+        } catch (error) {
+            console.log('error :', error);
+            dispatch({ type: "ERROR_CREATED" });
+        }
+    };
+};
+export function submitUnit(unitValues, selectedUnitType, selectedBusiness) {
+    return async (dispatch) => {
+        try {
+            dispatch(actions.submittingUnit())
+            await axios.post('http://localhost:3003/Unit', { ...unitValues, unitType: selectedUnitType, selectedBusiness: selectedBusiness });
+            dispatch(actions.completeUnitSubmission());
         } catch (error) {
             console.log('error :', error);
             dispatch({ type: "ERROR_CREATED" });
