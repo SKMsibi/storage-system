@@ -13,7 +13,7 @@ class InsertUnit extends Component {
             allTypes: [],
             showForm: false,
             showTypeForm: false,
-            selectedType: null
+            selectedType: null,
         }
         this.showUnitTypeForm = this.showUnitTypeForm.bind(this);
         this.addUnitType = this.addUnitType.bind(this);
@@ -53,8 +53,10 @@ class InsertUnit extends Component {
         }
     };
     submitUnit(e) {
-        e.preventDefault()
         this.props.submittingAUnit(this.props.unitValues.values, this.props.selectedUnitType, this.props.selectedBusiness);
+        if (this.props.errorPresent) {
+            e.preventDefault();
+        }
     }
     render() {
         return (
@@ -86,6 +88,9 @@ class InsertUnit extends Component {
                         </div>
                     )}
                 </div>
+                {this.props.errorPresent && (
+                    <h4>Error submitting, check your all your fields</h4>
+                )}
             </div>
         );
     }
@@ -99,7 +104,8 @@ const mapStateToProps = (state) => {
         allBlocks: state.unit.allBlocks,
         unitValues: state.form.InsertUnitForm,
         selectedBusiness: state.business.selectedBusiness,
-        selectedUnitType: state.unit.selectedUnitType
+        selectedUnitType: state.unit.selectedUnitType,
+        errorPresent: state.unit.errorOnSubmitting
     }
 }
 const mapDispatchToProps = (dispatch) => {
