@@ -96,11 +96,11 @@ export function submitUnit(unitValues, selectedUnitType, selectedBusiness) {
     return async (dispatch) => {
         try {
             dispatch(actions.submittingUnit())
-            await axios.post('http://localhost:3003/Unit', { ...unitValues, unitType: selectedUnitType, selectedBusiness: selectedBusiness });
+            await axios.post('http://localhost:3003/unit', { ...unitValues, unitType: selectedUnitType, selectedBusiness: selectedBusiness });
             dispatch(actions.completeUnitSubmission());
         } catch (error) {
             console.log('error :', error);
-            dispatch({ type: "ERROR_CREATED" });
+            dispatch({ type: "ERROR_CREATED_ADDING_UNIT" });
         }
     };
 };
