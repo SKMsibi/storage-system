@@ -12,9 +12,9 @@ export class UnitForm extends Component {
                         <Field name='unitName' component="input" type="text" required={true} />
                         <label htmlFor='blockName'>Block Name</label>
                         <Field name="blockName" component="select" required={true}>
-                            <option value="Select Block">Select Block</option>
+                            <option></option>
                             {this.props.allBlocks.map(block => {
-                                return <option key={this.props.allBlocks.indexOf(block)} value={block.name}>{block.name}</option>
+                                return <option key={this.props.allBlocks.indexOf(block)} value={block.name} required={true}>{block.name}</option>
                             })}
                         </Field>
                     </div>
