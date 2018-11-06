@@ -78,7 +78,7 @@ app.get('/allUnits/:searchBy/:searchPhrase', async function (req, res) {
     res.status(500).end()
   }
 });
-app.post('/Unit', async function (req, res) {
+app.post('/unit', async function (req, res) {
   try {
     await helper.submitUnit(req.body);
     res.status(201).end()
