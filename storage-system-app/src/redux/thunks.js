@@ -104,3 +104,13 @@ export function submitUnit(unitValues, selectedUnitType, selectedBusiness) {
         }
     };
 };
+export function signIn(userInfo) {
+    return async (dispatch) => {
+        try {
+            await axios.post('http://localhost:3003/signUp', userInfo);
+        } catch (error) {
+            console.log('error :', error);
+            dispatch({ type: "ERROR_CREATED_ADDING_UNIT" });
+        }
+    };
+};
