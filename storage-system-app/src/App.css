@@ -53,6 +53,10 @@ business-location{
   flex-direction: column;
   align-items: center;
 }
+.sign-up{
+  text-align: center;
+
+}
 input{
   height: auto;
 }
