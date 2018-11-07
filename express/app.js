@@ -115,6 +115,17 @@ app.get('/blocks/:businessName', async function (req, res) {
     res.status(500).end()
   }
 });
+
+app.post('/signUp', async function (req, res) {
+  try {
+    console.log('req.body :', req.body);
+    res.status(201).end()
+  } catch (error) {
+    console.log('error :', error);
+    res.status(500).end()
+  }
+});
+
 app.listen(3003, function () {
   console.log('web server listening on port 3003')
 });
