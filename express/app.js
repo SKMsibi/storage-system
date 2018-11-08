@@ -121,7 +121,10 @@ app.get('/blocks/:businessName', async function (req, res) {
 
 app.post('/signUp', async function (req, res) {
   try {
-    helper.registerUser(req.body);
+    var registerUser = await helper.registerUser(req.body);
+    if (!registerUser) {
+      res.status(204).end();
+    }
     res.status(201).end()
   } catch (error) {
     console.log('error :', error);
