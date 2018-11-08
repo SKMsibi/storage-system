@@ -23,7 +23,6 @@ export class SignUp extends Component {
     }
     registerUser(e) {
         e.preventDefault();
-        console.log("default prevented")
         if (this.props.formDetails.values.password1 === this.props.formDetails.values.password2) {
             this.setState({ errorPresent: false, errorMessage: "" })
             this.props.userSigningIn(this.props.formDetails.values);
