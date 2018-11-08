@@ -7,6 +7,9 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 var connectionString = "postgres://sabelo:1230skm@localhost:5432/storage_system";
+const passport = require('passport');
+app.use(passport.initialize());
+app.use(passport.session());
 const client = new pg.Client(connectionString);
 client.connect();
 
@@ -118,7 +121,7 @@ app.get('/blocks/:businessName', async function (req, res) {
 
 app.post('/signUp', async function (req, res) {
   try {
-    console.log('req.body :', req.body);
+    helper.registerUser(req.body);
     res.status(201).end()
   } catch (error) {
     console.log('error :', error);
