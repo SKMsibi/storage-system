@@ -4,11 +4,34 @@ import { Field, reduxForm } from 'redux-form';
 import { signIn } from '../redux/thunks';
 
 export class SignUp extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            errorPresent: false,
+            errorMessage: ""
+        }
+        this.registerUser = this.registerUser.bind(this);
+    }
+
+    registerUser(e) {
+        e.preventDefault();
+        console.log("default prevented")
+        if (this.props.formDetails.values.password1 === this.props.formDetails.values.password2) {
+            this.setState({ errorPresent: false, errorMessage: "" })
+            this.props.userLoggingIn(this.props.formDetails.values);
+            this.props.history.push("/displayUnits")
+        } else {
+            this.setState({ errorMessage: "passwords do not match!", errorPresent: true })
+        }
+    }
     render() {
         return (
             <div className="App-container">
                 <div className="sign-up">
-                    <form onSubmit={() => this.props.userLoggingIn(this.props.formDetails.values)}>
+                    {this.state.errorPresent && (
+                        <p style={{ color: "red" }}>{this.state.errorMessage}</p>
+                    )}
+                    <form onSubmit={this.registerUser}>
                         <div className="form-row">
                             <label htmlFor="userName">User name</label>
                             <Field name="userName" component="input" type="text" required={true} />
@@ -18,18 +41,14 @@ export class SignUp extends Component {
                             <Field name="email" component="input" type="email" required={true} />
                         </div>
                         <div className="form-row">
-                            <label htmlFor="firstName">First Name</label>
-                            <Field name="firstName" component="input" type="text" required={true} />
+                            <label htmlFor="password1">Password</label>
+                            <Field name="password1" component="input" type="password" required={true} />
                         </div>
                         <div className="form-row">
-                            <label htmlFor="lastName">Last Name</label>
-                            <Field name="lastName" component="input" type="text" required={true} />
+                            <label htmlFor="password2">Verify password</label>
+                            <Field name="password2" component="input" type="password" required={true} />
                         </div>
-                        <div className="form-row">
-                            <label htmlFor="password">password</label>
-                            <Field name="password" component="input" type="password" required={true} />
-                        </div>
-                        <button type="submit">submit</button>
+                        <button type="submit">Sign up!</button>
                     </form>
                 </div>
             </div >
