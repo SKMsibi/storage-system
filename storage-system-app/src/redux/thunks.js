@@ -107,10 +107,13 @@ export function submitUnit(unitValues, selectedUnitType, selectedBusiness) {
 export function signIn(userInfo) {
     return async (dispatch) => {
         try {
-            await axios.post('http://localhost:3003/signUp', userInfo);
+            var requestResults = await axios.post('http://localhost:3003/signUp', userInfo);
+            if (requestResults.status === 204) {
+                dispatch({ type: "ERROR_CREATED_SIGNING_IN", newValue: "User name already exists!" })
+            }
         } catch (error) {
             console.log('error :', error);
-            dispatch({ type: "ERROR_CREATED_ADDING_UNIT" });
+            dispatch({ type: "ERROR_CREATED_SIGNING_IN", newValue: "something went wrong" })
         }
     };
 };
