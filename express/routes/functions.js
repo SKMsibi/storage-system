@@ -2,6 +2,8 @@ var pg = require("pg");
 var connectionString = "postgres://sabelo:1230skm@localhost:5432/storage_system";
 const client = new pg.Client(connectionString);
 client.connect();
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 async function getAllBusinessNames() {
     const businessNames = await client.query(`SELECT name FROM business;`);
@@ -95,7 +97,22 @@ async function submitUnit(params) {
     const unitTypeId = await client.query('SELECT id FROM unit_types WHERE name=$1 AND height=$2 AND length=$3 AND width=$4;', unitTypeValue);
     var adding = await client.query('INSERT INTO units(name, unit_type_id, block_id)VALUES($1,$2,$3);', [unitName, unitTypeId.rows[0].id, blockId.rows[0].id]);
 };
+async function registerUser(params) {
+    var userExists = false;
+    var { userName, email, password1 } = params;
+    const userNames = await client.query('SELECT user_name from clients WHERE user_name = $1;', [userName]);
+    if (userNames.rowCount > 0) {
+        userExists = false;
+    } else {
+        var generatedSalt = await bcrypt.genSalt(saltRounds);
+        var hashedPassword = await bcrypt.hash(password1, generatedSalt);
+        await client.query('INSERT INTO clients(user_name, email, hashed_password)VALUES ($1,$2,$3);', [userName, email, hashedPassword]);
+        userExists = true;
+    }
+    return userExists;
+};
 module.exports = {
+    registerUser,
     submitUnit,
     insertUnitType,
     getAllBusinessNames,
