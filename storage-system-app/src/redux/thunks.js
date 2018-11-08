@@ -117,3 +117,16 @@ export function signIn(userInfo) {
         }
     };
 };
+export function logIn(userInfo) {
+    return async (dispatch) => {
+        try {
+            var requestResults = await axios.post('http://localhost:3003/logIn', userInfo);
+            if (requestResults.status === 204) {
+                dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "User does not exists!" })
+            }
+        } catch (error) {
+            console.log('error :', error);
+            dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
+        }
+    };
+};
