@@ -4,6 +4,9 @@ export default function SignInLogIn(state = {
 }, action) {
     var newState = { ...state }
     switch (action.type) {
+        case "ERROR_CREATED_LOGGING_IN":
+            newState = { ...newState, errorPresent: true, errorMessage: action.newValue };
+            break;
         case "ERROR_CREATED_SIGNING_IN":
             newState = { ...newState, errorPresent: true, errorMessage: action.newValue };
             break;
