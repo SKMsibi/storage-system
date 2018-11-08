@@ -39,10 +39,9 @@ CREATE TABLE IF NOT EXISTS business (
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS clients(
     id serial PRIMARY KEY,
-    first_name varchar(100) NOT NULL,
-    last_name varchar(100) NOT NULL,
-    email varchar(200) NOT NULL UNIQUE,
-    telephone varchar(100) NOT NULL,
+    user_name varchar(100) NOT NULL UNIQUE,
+    email varchar(200) NOT NULL,
+    hashed_password varchar(200) NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS client_storages(
