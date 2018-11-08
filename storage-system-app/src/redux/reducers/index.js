@@ -3,7 +3,8 @@ import business from './business';
 import location from './location';
 import blocks from './blocks';
 import unitType from './unit-types';
-import unit from './unit'
+import unit from './unit';
+import SignInLogIn from './user-sign-and-log-in'
 import { combineReducers } from 'redux';
 
 export default combineReducers({
@@ -12,5 +13,6 @@ export default combineReducers({
     location: location,
     unitType: unitType,
     blocks: blocks,
-    unit: unit
+    unit: unit,
+    SignInLogIn: SignInLogIn
 });
