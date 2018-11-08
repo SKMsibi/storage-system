@@ -12,14 +12,22 @@ export class SignUp extends Component {
         }
         this.registerUser = this.registerUser.bind(this);
     }
-
+    checkResults() {
+        setTimeout(() => {
+            if (this.props.signInDetails.errorPresent) {
+                this.setState({ errorMessage: this.props.signInDetails.errorMessage, errorPresent: true })
+            } else {
+                this.props.history.push("/displayUnits")
+            }
+        }, 1000);
+    }
     registerUser(e) {
         e.preventDefault();
         console.log("default prevented")
         if (this.props.formDetails.values.password1 === this.props.formDetails.values.password2) {
             this.setState({ errorPresent: false, errorMessage: "" })
-            this.props.userLoggingIn(this.props.formDetails.values);
-            this.props.history.push("/displayUnits")
+            this.props.userSigningIn(this.props.formDetails.values);
+            this.checkResults()
         } else {
             this.setState({ errorMessage: "passwords do not match!", errorPresent: true })
         }
@@ -57,13 +65,14 @@ export class SignUp extends Component {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        userLoggingIn: (userDetails) => {
+        userSigningIn: (userDetails) => {
             dispatch(signIn(userDetails))
         }
     }
 };
 const mapStateToProps = (state) => {
     return {
+        signInDetails: state.SignInLogIn,
         formDetails: state.form.signUpForm
     }
 }
