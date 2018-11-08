@@ -111,7 +111,21 @@ async function registerUser(params) {
     }
     return userExists;
 };
+async function logUserIn(params) {
+    var { userName, password } = params;
+    const userInfo = await client.query('SELECT hashed_password from clients WHERE user_name = $1;', [userName]);
+    if (userInfo.rowCount <= 0) {
+        userExists = false;
+    } else {
+        console.log('userInfo :', userInfo);
+        var comp = await bcrypt.compare(password, userInfo.rows[0].hashed_password);
+        userExists = comp;
+    }
+    return userExists;
+};
+
 module.exports = {
+    logUserIn,
     registerUser,
     submitUnit,
     insertUnitType,
