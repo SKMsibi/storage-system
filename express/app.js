@@ -118,10 +118,21 @@ app.get('/blocks/:businessName', async function (req, res) {
     res.status(500).end()
   }
 });
-
 app.post('/signUp', async function (req, res) {
   try {
     var registerUser = await helper.registerUser(req.body);
+    if (!registerUser) {
+      res.status(204).end();
+    }
+    res.status(201).end()
+  } catch (error) {
+    console.log('error :', error);
+    res.status(500).end()
+  }
+});
+app.post('/logIn', async function (req, res) {
+  try {
+    var registerUser = await helper.logUserIn(req.body);
     if (!registerUser) {
       res.status(204).end();
     }
