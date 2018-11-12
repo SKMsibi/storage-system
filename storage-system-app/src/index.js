@@ -5,7 +5,7 @@ import RegisterBlocks from './components/register-blocks';
 import InsertUnit from './components/insert-unit';
 import InsertLocation from './components/insert-location';
 import viewInfo from "./components/view-info";
-import signUp from './components/sign-up';
+import RegisterBusiness from './components/register-business';
 import LogIn from './components/log-in'
 import navbar from './components/navbar'
 import { Provider } from 'react-redux';
@@ -23,7 +23,7 @@ ReactDOM.render(
                 <Route exact path="/insertUnitType" component={InsertUnit} />
                 <Route exact path="/insertLocation" component={InsertLocation} />
                 <Route exact path="/displayUnits" component={viewInfo} />
-                <Route exact path="/signUp" component={signUp} />
+                <Route exact path="/registerBusiness" component={RegisterBusiness} />
                 <Route exact path="/logIn" component={LogIn} />
             </div>
         </Router>
