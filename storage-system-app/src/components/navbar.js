@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-
 export default class navbar extends Component {
-
+    changeRoute(route) {
+        this.props.history.push(route)
+    }
     render() {
         return (
             <header className="nav">
-                <Link to="/logIn"><button className="navigation-button">User Login</button></Link>
-                <Link to="/registerBusiness"><button className="navigation-button">Register Business</button></Link>
-                <Link to="/insertLocation"><button className="navigation-button">Business location</button></Link>
-                <Link to="/insertBlocks"><button className="navigation-button">Insert Blocks</button></Link>
-                <Link to="/insertUnitType"><button className="navigation-button">Insert unites</button></Link>
-                <Link to="/displayUnits"><button className="navigation-button">view Units</button></Link>
+                <button onClick={() => this.changeRoute("/logIn")} className="navigation-button">User Login</button>
+                <button onClick={() => this.changeRoute("/registerBusiness")} className="navigation-button">Register Business</button>
+                <button onClick={() => this.changeRoute("/insertLocation")} className="navigation-button">Business location</button>
+                <button onClick={() => this.changeRoute("/insertBlocks")} className="navigation-button">Insert Blocks</button>
+                <button onClick={() => this.changeRoute("/insertUnitType")} className="navigation-button">Insert unites</button>
+                <button onClick={() => this.changeRoute("/displayUnits")} className="navigation-button">view Units</button>
             </header>
         )
     }
