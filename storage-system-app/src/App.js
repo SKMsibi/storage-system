@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import BusinessForm from './components/forms/register-business-form';
+import SignUp from './components/sign-up'
 import './App.css';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="App-container">
-          <BusinessForm {...this.props} />
-        </div>
+        <SignUp />
       </div>
     );
   }
