@@ -122,7 +122,6 @@ async function logUserIn(params) {
     if (userInfo.rowCount <= 0) {
         userExists = false;
     } else {
-        console.log('userInfo :', userInfo);
         var comp = await bcrypt.compare(password, userInfo.rows[0].hashed_password);
         userExists = comp;
     }
