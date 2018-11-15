@@ -5,6 +5,7 @@ import blocks from './blocks';
 import unitType from './unit-types';
 import unit from './unit';
 import SignInLogIn from './user-sign-and-log-in'
+import displayUnits from './view-units'
 import { combineReducers } from 'redux';
 
 export default combineReducers({
@@ -14,5 +15,6 @@ export default combineReducers({
     unitType: unitType,
     blocks: blocks,
     unit: unit,
-    SignInLogIn: SignInLogIn
+    SignInLogIn: SignInLogIn,
+    displayUnits: displayUnits
 });
