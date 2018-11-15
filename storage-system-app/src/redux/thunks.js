@@ -1,5 +1,42 @@
 import axios from 'axios';
 import * as actions from "./actions";
+
+export function getAllAvailableUnits(searchBy, searchPhrase) {
+    return async (dispatch) => {
+        console.log('searchBy, searchPhrase :', searchBy, searchPhrase);
+        var allUnits = await axios.get(`http://localhost:3003/allUnits/${searchBy}/${searchPhrase}`);
+        if (allUnits.data) {
+            dispatch(actions.getAllUnitsForDisplay(allUnits.data));
+        }
+    };
+};
+export function getBusinessesForUnits() {
+    return async (dispatch) => {
+        var allTheBusiness = await axios.get('http://localhost:3003/businesses');
+        if (allTheBusiness.data) {
+            dispatch(actions.getBusinessesForUnits(allTheBusiness.data));
+        }
+    };
+};
+export function getAllUnitTypesForUnis() {
+    return async (dispatch) => {
+        try {
+            var allAvailableUnitTypes = await axios.get('http://localhost:3003/unitTypes');
+            dispatch(actions.getUnitTYpeForUnits(allAvailableUnitTypes.data));
+        } catch (error) {
+            console.log('error :', error);
+            dispatch({ type: "ERROR_CREATED" });
+        }
+    };
+};
+export function getLocationsForUnits() {
+    return async (dispatch) => {
+        var allTheLocations = await axios.get('http://localhost:3003/allAvailableLocations');
+        if (allTheLocations.data) {
+            dispatch(actions.getLocationsForUnits(allTheLocations.data));
+        }
+    };
+};
 export function getBusinesses() {
     return async (dispatch) => {
         var allTheBusiness = await axios.get('http://localhost:3003/businesses');
