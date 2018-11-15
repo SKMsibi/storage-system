@@ -20,12 +20,6 @@ export default class viewInfo extends Component {
     componentDidMount() {
         this.refs.getButton.disabled = true;
     }
-    async getLocations(location) {
-        var allLocations = await axios.get('http://localhost:3003/locations/' + location);
-        if (allLocations.data.length > 0) {
-            this.setState({ allLocations: allLocations.data, showLocationDropDown: true });
-        }
-    }
     async changeSearchBy() {
         if (this.refs.search.value === 'search') {
             this.setState({ showInput: false, displayUnits: false })
@@ -38,7 +32,8 @@ export default class viewInfo extends Component {
                 var allUnitTypes = await axios.get('http://localhost:3003/unitTypes');
                 this.setState({ allUnitTypes: allUnitTypes.data, showInput: true, searchBy: this.refs.search.value });
             } else {
-                this.setState({ showInput: true, searchBy: this.refs.search.value })
+                var allAvailableLocations = await axios.get('http://localhost:3003/allAvailableLocations');
+                this.setState({ showLocationDropDown: true, allLocations: allAvailableLocations.data, searchBy: this.refs.search.value })
             }
         }
     }
@@ -78,6 +73,7 @@ export default class viewInfo extends Component {
     }
     async getData() {
         var allUnits = await axios.get(`http://localhost:3003/allUnits/${this.state.searchBy}/${this.state.searchPhrase}`);
+        console.log('object :', allUnits.data);
         if (allUnits) {
             this.setState({ units: allUnits.data, displayUnits: true });
         }
@@ -99,17 +95,11 @@ export default class viewInfo extends Component {
                             return <option key={this.state.allBusiness.indexOf(singleBusiness)} value={singleBusiness.name}>{singleBusiness.name}</option>
                         })}
                     </select>)}
-                {this.state.showInput && this.state.searchBy === "locations" && (
-                    <div>
-                        <input type="text" name="location" placeholder="location search key(country/province/town)" ref="select" onChange={() => this.handleChange()} />
-                        <button onClick={() => this.getLocations(this.state.searchPhrase)}>find</button>
-                    </div>
-                )}
-                {this.state.showLocationDropDown && (
+                {this.state.showLocationDropDown && this.state.searchBy === "locations" && (
                     <select ref="locationDropDown" name="locationDropDown" onChange={() => this.handleLocationChange()}>
                         <option value="Select locations">Select locations</option>
                         {this.state.allLocations.map(singleBusiness => {
-                            return <option key={this.state.allBusiness.indexOf(singleBusiness)} value={`${singleBusiness.country},${singleBusiness.address1},${singleBusiness.address2},${singleBusiness.address3}`}>{singleBusiness.country}, {singleBusiness.address1}, {singleBusiness.address2}, {singleBusiness.address3}</option>
+                            return <option key={this.state.allBusiness.indexOf(singleBusiness)} value={`${singleBusiness.region},${singleBusiness.city},${singleBusiness.address1},${singleBusiness.address2}`}>{singleBusiness.region}, {singleBusiness.city}, {singleBusiness.address1}, {singleBusiness.address2}</option>
                         })}
                     </select>
                 )}
@@ -122,8 +112,8 @@ export default class viewInfo extends Component {
                     </select>)}
                 <button onClick={() => this.getData()} ref="getButton">Go</button>
                 {this.state.displayUnits && (
-                    this.state.units.map(item =>
-                        <h4>{item.name}</h4>)
+                    this.state.units.length <= 0 ? <p>Sorry No units are available for the selected options.</p> : this.state.units.map(item =>
+                        <h4 key={this.state.units.indexOf(item)}>{item.name}</h4>)
                 )}
             </div >
         )
