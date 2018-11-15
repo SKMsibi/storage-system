@@ -60,8 +60,13 @@ async function getAllMatchingLocations(location) {
     const units = await client.query("SELECT business_id,region,address1,address2,city FROM locations WHERE to_tsvector(region) @@ to_tsquery($1) or to_tsvector(address1) @@ to_tsquery($1) or to_tsvector(address2) @@ to_tsquery($1) or to_tsvector(city) @@ to_tsquery($1);", [location]);
     return units.rows;
 };
+
+async function getAllAvailableLocations() {
+    const locations = await client.query("SELECT business_id,region,address1,address2,city FROM locations;");
+    return locations.rows;
+};
 async function getAllUnitsByLocation(location) {
-    const units = await client.query("SELECT units.name FROM locations INNER JOIN business on locations.business_id = business.id INNER JOIN unit_types on business.id = unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id  WHERE country = $1 AND address1 = $2 AND address2 = $3 AND address3 = $4;", location.split(","));
+    const units = await client.query("SELECT * FROM locations INNER JOIN business on locations.business_id = business.id INNER JOIN unit_types on business.id = unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id  WHERE region = $1  AND city = $2 AND address1 = $3 AND address2 = $4;", location.split(","));
     return units.rows;
 };
 async function getUnits(params) {
@@ -141,5 +146,6 @@ module.exports = {
     getAllMatchingLocations,
     getAllUnitsByLocation,
     getUnits,
-    getAllBlocks
+    getAllBlocks,
+    getAllAvailableLocations
 }  
