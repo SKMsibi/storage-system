@@ -42,3 +42,16 @@ export function completeUnitSubmission() {
     return { type: "COMPLETE_UNIT_SUBMISSION" }
 };
 
+export function getBusinessesForUnits(businesses) {
+    return { type: "GET_ALL_BUSINESSES", newValue: businesses }
+};
+export function getUnitTYpeForUnits(unitTypes) {
+    return { type: "GET_ALL_UNIT_TYPES", newValue: unitTypes }
+};
+export function getLocationsForUnits(locations) {
+    return { type: "GET_ALL_LOCATIONS", newValue: locations }
+};
+export function getAllUnitsForDisplay(units) {
+    return { type: "GET_ALL_UNITS", newValue: units }
+};
+
