@@ -19,6 +19,7 @@ ReactDOM.render(
             <div>
                 <Route path="/" component={navbar} />
                 <Route exact path="/" component={App} />
+                <Route exact path="/signUp" component={App} />
                 <Route exact path="/insertBlocks" component={RegisterBlocks} />
                 <Route exact path="/insertUnitType" component={InsertUnit} />
                 <Route exact path="/insertLocation" component={InsertLocation} />
