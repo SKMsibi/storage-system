@@ -1,15 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import * as thunks from '../redux/thunks';
-
-
+import * as actions from '../redux/actions'
+import ViewUnitsTable from './view-units-table';
 class viewInfo extends Component {
     constructor(props) {
         super(props)
         this.state = {
             showLocationDropDown: false,
             displaySelected: false,
-            searchBy: '',
             searchPhrase: '',
             showInput: false,
             displayUnits: false
@@ -25,13 +24,16 @@ class viewInfo extends Component {
             this.setState({ displayUnits: false })
             if (this.refs.search.value === 'business') {
                 this.props.getAllBusinesses();
-                this.setState({ showInput: true, searchBy: this.refs.search.value });
+                this.props.updateSearchBy(this.refs.search.value)
+                this.setState({ showInput: true });
             } else if (this.refs.search.value === "unit Types") {
                 this.props.getAllUnitTypes()
-                this.setState({ showInput: true, searchBy: this.refs.search.value });
+                this.props.updateSearchBy(this.refs.search.value)
+                this.setState({ showInput: true });
             } else {
                 this.props.getAllLocations()
-                this.setState({ showLocationDropDown: true, searchBy: this.refs.search.value })
+                this.props.updateSearchBy(this.refs.search.value)
+                this.setState({ showLocationDropDown: true })
             }
         }
     }
@@ -70,11 +72,11 @@ class viewInfo extends Component {
         this.refs.getButton.disabled = false;
     }
     async getData() {
-        this.props.getAllAvailableUnits(this.state.searchBy, this.state.searchPhrase);
+        this.props.getAllAvailableUnits(this.props.searchBy, this.state.searchPhrase);
         this.setState({ displayUnits: true });
     }
     render() {
-        console.log('this.pro :', this.props);
+        console.log('this.props :', this.props);
         return (
             <div className="App-container">
                 <h3>View all units</h3>
@@ -84,14 +86,14 @@ class viewInfo extends Component {
                     <option value="unit Types">Unit Type</option>
                     <option value="locations">Locations</option>
                 </select>
-                {this.state.showInput && this.state.searchBy === "business" && (
+                {this.state.showInput && this.props.searchBy === "business" && (
                     <select ref="select" name="business" onChange={() => this.handleChange()}>
                         <option value="Select Business">Select Business</option>
                         {this.props.businesses.map(singleBusiness => {
                             return <option key={this.props.businesses.indexOf(singleBusiness)} value={singleBusiness.name}>{singleBusiness.name}</option>
                         })}
                     </select>)}
-                {this.state.showLocationDropDown && this.state.searchBy === "locations" && (
+                {this.state.showLocationDropDown && this.props.searchBy === "locations" && (
                     <select ref="locationDropDown" name="locationDropDown" onChange={() => this.handleLocationChange()}>
                         <option value="Select locations">Select locations</option>
                         {this.props.locations.map(singleBusiness => {
@@ -99,7 +101,7 @@ class viewInfo extends Component {
                         })}
                     </select>
                 )}
-                {this.state.showInput && this.state.searchBy === "unit Types" && (
+                {this.state.showInput && this.props.searchBy === "unit Types" && (
                     <select ref="select" name="unit types" onChange={() => this.handleChange()}>
                         <option value="Select unit type">Select unit type (height, length, width)</option>
                         {this.props.unitTypes.map(singleUnitType => {
@@ -110,6 +112,9 @@ class viewInfo extends Component {
                 {this.state.displayUnits && (
                     this.props.units.length <= 0 ? <p>Sorry No units are available for the selected options.</p> : this.props.units.map(item =>
                         <h4 key={this.props.units.indexOf(item)}>{item.name}</h4>)
+                )}
+                {this.state.displayUnits && (
+                    <ViewUnitsTable />
                 )}
             </div >
         )
@@ -128,6 +133,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         getAllAvailableUnits: (searchBy, searchPhrase) => {
             dispatch(thunks.getAllAvailableUnits(searchBy, searchPhrase))
+        },
+        updateSearchBy: (category) => {
+            dispatch(actions.updateSearchBy(category))
+        },
+        updateSearchPhrase: (phrase) => {
+            dispatch(actions.updateSearchPhrase(phrase))
         }
     }
 }
@@ -137,7 +148,8 @@ const mapStateToProps = (state) => {
         businesses: state.displayUnits.allBusiness,
         unitTypes: state.displayUnits.allUnitTypes,
         locations: state.displayUnits.allLocations,
-        units: state.displayUnits.allUnits
+        units: state.displayUnits.allUnits,
+        searchBy: state.displayUnits.searchBy
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(viewInfo);
