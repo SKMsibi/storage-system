@@ -104,31 +104,51 @@ async function submitUnit(params) {
 };
 async function registerUser(params) {
     var userExists = false;
-    var { userName, email, password1 } = params;
-    const userNames = await client.query('SELECT user_name from clients WHERE user_name = $1;', [userName]);
+    var { userName, email, role, password1 } = params;
+    console.log('object :', userName, email, role, password1);
+    const userNames = await client.query('SELECT email from clients WHERE email = $1;', [email]);
     if (userNames.rowCount > 0) {
         userExists = false;
     } else {
         var generatedSalt = await bcrypt.genSalt(saltRounds);
         var hashedPassword = await bcrypt.hash(password1, generatedSalt);
-        await client.query('INSERT INTO clients(user_name, email, hashed_password)VALUES ($1,$2,$3);', [userName, email, hashedPassword]);
+        await client.query('INSERT INTO clients(user_name, email, role, hashed_password, salt)VALUES ($1,$2,$3,$4,$5);', [userName, email, role, hashedPassword, generatedSalt]);
         userExists = true;
     }
     return userExists;
 };
+async function getUserInfo(params) {
+    var { email, password } = params;
+    const userInfo = await client.query('SELECT hashed_password from clients WHERE email = $1;', [email]);
+    if (userInfo.rowCount <= 0) {
+        userExists = false;
+    } else {
+        return userInfo.rows[0];
+    }
+};
+
 async function logUserIn(params) {
-    var { userName, password } = params;
-    const userInfo = await client.query('SELECT hashed_password from clients WHERE user_name = $1;', [userName]);
+    var { email, password } = params;
+    const userInfo = await client.query('SELECT hashed_password from clients WHERE email = $1;', [email]);
     if (userInfo.rowCount <= 0) {
         userExists = false;
     } else {
         var comp = await bcrypt.compare(password, userInfo.rows[0].hashed_password);
         userExists = comp;
     }
+    console.log('userExists :', userExists);
     return userExists;
 };
+async function findUser(userEmail) {
+    const userInfo = await client.query('SELECT * from clients WHERE email = $1;', [userEmail]);
+    if (userInfo.rowCount <= 0) {
+        return false;
+    }
+    return userInfo.rows[0];
+}
 
 module.exports = {
+    findUser,
     logUserIn,
     registerUser,
     submitUnit,
@@ -146,5 +166,6 @@ module.exports = {
     getAllUnitsByLocation,
     getUnits,
     getAllBlocks,
-    getAllAvailableLocations
+    getAllAvailableLocations,
+    getUserInfo
 }  
