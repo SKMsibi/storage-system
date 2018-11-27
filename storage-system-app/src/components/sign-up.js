@@ -48,6 +48,13 @@ export class SignUp extends Component {
                             <Field name="email" component="input" type="email" required={true} />
                         </div>
                         <div className="form-row">
+                            <label>Sign up as</label>
+                            <div style={{ fontSize: "90%" }}>
+                                <label><Field name="role" component="input" type="radio" required={true} value="Storage Owner" />Storage Owner</label><br />
+                                <label><Field name="role" component="input" type="radio" required={true} value="Storage Ranter" />Storage Renter</label>
+                            </div>
+                        </div>
+                        <div className="form-row">
                             <label htmlFor="password1">Password</label>
                             <Field name="password1" component="input" type="password" required={true} />
                         </div>
