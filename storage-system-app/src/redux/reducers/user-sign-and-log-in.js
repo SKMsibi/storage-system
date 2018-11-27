@@ -10,7 +10,12 @@ export default function SignInLogIn(state = {
         case "ERROR_CREATED_SIGNING_IN":
             newState = { ...newState, errorPresent: true, errorMessage: action.newValue };
             break;
+        case "REMOVE_ERRORS":
+            newState = { ...newState, errorPresent: false, errorMessage: "s" };
+            break;
         default:
+
+
             newState = { ...state }
             break;
     }
