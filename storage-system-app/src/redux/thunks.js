@@ -1,6 +1,15 @@
 import axios from 'axios';
 import * as actions from "./actions";
 
+(function () {
+    var token = sessionStorage.getItem("jwtToken");
+    if (token) {
+        axios.defaults.headers.common['Authorization'] = token;
+    } else {
+        axios.defaults.headers.common['Authorization'] = null;
+    }
+})();
+
 export function getAllAvailableUnits(searchBy, searchPhrase) {
     return async (dispatch) => {
         console.log('searchBy, searchPhrase :', searchBy, searchPhrase);
@@ -146,7 +155,10 @@ export function signIn(userInfo) {
         try {
             var requestResults = await axios.post('http://localhost:3003/signUp', userInfo);
             if (requestResults.status === 204) {
-                dispatch({ type: "ERROR_CREATED_SIGNING_IN", newValue: "User name already exists!" })
+                console.log('requestResults.status :', requestResults.data);
+                dispatch({ type: "ERROR_CREATED_SIGNING_IN", newValue: "email already exists!" })
+            } else {
+                dispatch({ type: "REMOVE_ERRORS" });
             }
         } catch (error) {
             console.log('error :', error);
@@ -160,9 +172,12 @@ export function logIn(userInfo) {
             var requestResults = await axios.post('http://localhost:3003/logIn', userInfo);
             if (requestResults.status === 204) {
                 dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "User does not exists!" })
+            } else {
+                dispatch({ type: "REMOVE_ERRORS" });
+                sessionStorage.setItem("jwtToken", requestResults.data.token);
             }
         } catch (error) {
-            console.log('error :', error);
+            console.log('error is:', error);
             dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
         }
     };
