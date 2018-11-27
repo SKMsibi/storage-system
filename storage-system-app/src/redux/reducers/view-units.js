@@ -12,6 +12,12 @@ export default function displayUnits(state = {
 }, action) {
     var newState = { ...state }
     switch (action.type) {
+        case "UPDATE_SEARCH_BY":
+            newState = { ...newState, searchBy: action.newValue };
+            break;
+        case "UPDATE_SEARCH_PHRASE":
+            newState = { ...newState, searchPhrase: action.newValue };
+            break;
         case "GET_ALL_BUSINESSES":
             newState = { ...newState, allBusiness: action.newValue };
             break;
