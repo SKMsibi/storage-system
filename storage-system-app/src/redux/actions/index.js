@@ -54,4 +54,12 @@ export function getLocationsForUnits(locations) {
 export function getAllUnitsForDisplay(units) {
     return { type: "GET_ALL_UNITS", newValue: units }
 };
+export function updateSearchBy(category) {
+    return { type: "UPDATE_SEARCH_BY", newValue: category }
+};
+export function updateSearchPhrase(phrase) {
+    return { type: "UPDATE_SEARCH_PHRASE", newValue: phrase }
+};
+
+
 
