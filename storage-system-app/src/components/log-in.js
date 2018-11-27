@@ -36,8 +36,8 @@ export class LogIn extends Component {
                     )}
                     <form onSubmit={this.logInUser}>
                         <div className="form-row">
-                            <label htmlFor="userName">User name</label>
-                            <Field name="userName" component="input" type="text" required={true} />
+                            <label htmlFor="email">Email</label>
+                            <Field name="email" component="input" type="email" required={true} />
                         </div>
                         <div className="form-row">
                             <label htmlFor="password">Password</label>
