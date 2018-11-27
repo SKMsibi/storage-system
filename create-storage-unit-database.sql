@@ -39,9 +39,11 @@ CREATE TABLE IF NOT EXISTS business (
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS clients(
     id serial PRIMARY KEY,
-    user_name varchar(100) NOT NULL UNIQUE,
-    email varchar(200) NOT NULL,
+    user_name varchar(100) NOT NULL,
+    email varchar(200) NOT NULL UNIQUE,
+    role varchar(100) NOT NULL,
     hashed_password varchar(200) NOT NULL,
+    salt varchar(100) NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS client_storages(
@@ -96,13 +98,20 @@ VALUES
     ('A3', 1);
 INSERT INTO
     clients(
-        first_name,
-        last_name,
+        user_name,
         email,
-        telephone
+        role,
+        hashed_password,
+        salt
     )
 VALUES
-    ('Sabelo', 'Msibi', 'skm@gmail.com', '0715585598');
+    (
+        'Sabelo',
+        'skm@gmail.com',
+        'renter',
+        'saokfjlsajdfljsf323rsdf23e',
+        '$2b$10$hpM/htGGEvmITPs77p9HoO'
+    );
 INSERT INTO
     used_storages(
         client_id,
