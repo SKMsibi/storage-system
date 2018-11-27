@@ -20,7 +20,7 @@
   display: grid;
   grid-template-columns: repeat(2,50%);
   text-align: left;
-  padding-bottom: 2%
+  padding-bottom: 2%;
  }
 
 .business-address{
