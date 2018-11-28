@@ -9,9 +9,17 @@ import RegisterBusiness from './components/register-business';
 import LogIn from './components/log-in'
 import navbar from './components/navbar'
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import './index.css';
 import store from './redux/store';
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={props => (
+        sessionStorage.getItem("jwtToken")
+            ? <Component {...props} />
+            : <Redirect to={{ pathname: '/login' }} />
+    )} />
+)
 
 ReactDOM.render(
     <Provider store={store}>
@@ -20,12 +28,12 @@ ReactDOM.render(
                 <Route path="/" component={navbar} />
                 <Route exact path="/" component={App} />
                 <Route exact path="/signUp" component={App} />
-                <Route exact path="/insertBlocks" component={RegisterBlocks} />
-                <Route exact path="/insertUnitType" component={InsertUnit} />
-                <Route exact path="/insertLocation" component={InsertLocation} />
-                <Route exact path="/displayUnits" component={viewInfo} />
-                <Route exact path="/registerBusiness" component={RegisterBusiness} />
                 <Route exact path="/logIn" component={LogIn} />
+                <PrivateRoute exact path="/insertBlocks" component={RegisterBlocks} />
+                <PrivateRoute exact path="/insertUnitType" component={InsertUnit} />
+                <PrivateRoute exact path="/insertLocation" component={InsertLocation} />
+                <PrivateRoute exact path="/displayUnits" component={viewInfo} />
+                <PrivateRoute exact path="/registerBusiness" component={RegisterBusiness} />
             </div>
         </Router>
     </Provider >, document.getElementById('root'));
