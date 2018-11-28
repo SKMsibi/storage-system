@@ -9,7 +9,6 @@ class viewInfo extends Component {
         this.state = {
             showLocationDropDown: false,
             displaySelected: false,
-            searchPhrase: '',
             showInput: false,
             displayUnits: false
         }
@@ -41,17 +40,17 @@ class viewInfo extends Component {
         switch (this.refs.select.name) {
             case "location":
                 if (this.refs.select.value.length > 0) {
-                    this.setState({ searchPhrase: this.refs.select.value })
+                    this.props.setSearchPhrase(this.refs.select.value);
                 } else {
                     this.refs.getButton.disabled = true;
-                    this.setState({ searchPhrase: this.refs.select.value })
+                    this.props.setSearchPhrase(this.refs.select.value);
                 }
                 break;
             case "business":
                 if (this.refs.select.value === "Select Business") {
                     this.refs.getButton.disabled = true;
                 } else {
-                    this.setState({ searchPhrase: this.refs.select.value })
+                    this.props.setSearchPhrase(this.refs.select.value);
                     this.refs.getButton.disabled = false;
                 }
                 break;
@@ -59,7 +58,7 @@ class viewInfo extends Component {
                 if (this.refs.select.value === "Select unit type") {
                     this.refs.getButton.disabled = true;
                 } else {
-                    this.setState({ searchPhrase: this.refs.select.value })
+                    this.props.setSearchPhrase(this.refs.select.value);
                     this.refs.getButton.disabled = false;
                 }
                 break;
@@ -68,15 +67,16 @@ class viewInfo extends Component {
         }
     }
     handleLocationChange() {
-        this.setState({ searchPhrase: this.refs.locationDropDown.value })
+        this.props.setSearchPhrase(this.refs.locationDropDown.value);
         this.refs.getButton.disabled = false;
     }
     async getData() {
-        this.props.getAllAvailableUnits(this.props.searchBy, this.state.searchPhrase);
+        this.props.getAllAvailableUnits(this.props.searchBy, this.props.searchPhrase);
         this.setState({ displayUnits: true });
     }
     render() {
         console.log('this.props :', this.props);
+        console.log('this.state :', this.state);
         return (
             <div className="App-container">
                 <h3>View all units</h3>
@@ -137,7 +137,7 @@ const mapDispatchToProps = (dispatch) => {
         updateSearchBy: (category) => {
             dispatch(actions.updateSearchBy(category))
         },
-        updateSearchPhrase: (phrase) => {
+        setSearchPhrase: (phrase) => {
             dispatch(actions.updateSearchPhrase(phrase))
         }
     }
@@ -149,7 +149,8 @@ const mapStateToProps = (state) => {
         unitTypes: state.displayUnits.allUnitTypes,
         locations: state.displayUnits.allLocations,
         units: state.displayUnits.allUnits,
-        searchBy: state.displayUnits.searchBy
+        searchBy: state.displayUnits.searchBy,
+        searchPhrase: state.displayUnits.searchPhrase
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(viewInfo);
