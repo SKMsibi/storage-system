@@ -14,6 +14,8 @@ export class RegisterBlocks extends Component {
             numberOfBlocks: 1,
             blocks: [],
             showBlocksInsert: false,
+            errorPresent: false,
+            errorMessage: ""
         }
         this.handleChange = this.handleChange.bind(this);
         this.createBlockForms = this.createBlockForms.bind(this);
@@ -35,8 +37,13 @@ export class RegisterBlocks extends Component {
         this.setState({ blocks: arrTemp, showBlocksInsert: true })
     }
     submitBlocks() {
-        this.props.submitBlocks(this.props.blocksData.InsertBlockForm.values, this.props.selectedBusiness, this.props.selectLocation);
-        this.props.history.push("/insertUnitType");
+        console.log('object :', this.props.blocksData.InsertBlockForm.values);
+        if (this.props.blocksData.InsertBlockForm.values) {
+            this.props.submitBlocks(this.props.blocksData.InsertBlockForm.values, this.props.selectedBusiness, this.props.selectLocation);
+            this.props.history.push("/insertUnitType");
+        } else {
+            this.setState({ errorPresent: true, errorMessage: "Fill in at least one input!" })
+        }
     }
     handleBusinessSelection() {
         if (this.refs.select.value === "Select Business") {
@@ -71,7 +78,7 @@ export class RegisterBlocks extends Component {
                                 })}
                             </select>
                             {this.state.showLocationDropDown && (
-                                <h4>Select the location the Blocks.</h4>
+                                <h4>Select location for the Blocks.</h4>
                             )}
                             {this.state.showLocationDropDown && (
                                 <select ref="location" onChange={this.handleLocationSelection}>
@@ -86,7 +93,10 @@ export class RegisterBlocks extends Component {
                     {this.state.showForm && (
                         <div className="block-form">
                             <h4>How many blocks are you adding?</h4><br />
-                            <input type="number" min="1" name="numberOfBlocks" value={this.state.numberOfBlocks} onChange={this.handleChange} />
+                            {this.state.errorPresent && (
+                                <p style={{ color: "red" }}>{this.state.errorMessage}</p>
+                            )}
+                            <input type="number" min="1" max="5" name="numberOfBlocks" value={this.state.numberOfBlocks} onChange={this.handleChange} />
                             <button ref="addToDatabase" onClick={this.createBlockForms}>Go</button>
                             {this.state.blocks.map(item => {
                                 return <BlockForm number={item} key={item} />
