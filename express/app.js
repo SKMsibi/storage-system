@@ -178,7 +178,7 @@ app.get('/businessesWithLocations', authenticationMiddleware, async function (re
 app.get('/allUnits/:searchBy/:searchPhrase', authenticationMiddleware, async function (req, res) {
   try {
     var allUnits = await helper.getUnits(req.params);
-    res.status(201).send(allUnits).end()
+    res.status(200).send(allUnits).end()
   } catch (error) {
     console.log('error :', error);
     res.status(500).end()
