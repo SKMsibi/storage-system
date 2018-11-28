@@ -45,11 +45,11 @@ async function getAllUnitTypes(unitTypeInfo) {
     return unitTypes.rows;
 };
 async function getAllUnitsByUnitTypeId(unitTypeId) {
-    var units = await client.query("SELECT name FROM units WHERE Unit_type_id = $1", [unitTypeId]);
+    var units = await client.query("SELECT * FROM units WHERE Unit_type_id = $1", [unitTypeId]);
     return units.rows;
 };
 async function getAllUnitsByBusinessName(businessName) {
-    const units = await client.query("SELECT units.name FROM business INNER JOIN Unit_types on business.id = Unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id WHERE business.name = $1;", [businessName]);
+    const units = await client.query("SELECT * FROM business INNER JOIN Unit_types on business.id = Unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id WHERE business.name = $1;", [businessName]);
     return units.rows
 };
 async function getAllLocationsForABusiness(businessName) {
