@@ -9,7 +9,7 @@ export default class navbar extends Component {
     render() {
         return (
             <header className="nav">
-                <button onClick={() => this.changeRoute("/")} className="navigation-button">User log out</button>
+                <button onClick={() => this.changeRoute("/logIn")} className="navigation-button">User log out</button>
                 <button onClick={() => this.changeRoute("/signUp")} className="navigation-button">User sign-up</button>
                 <button onClick={() => this.changeRoute("/logIn")} className="navigation-button">User Login</button>
                 <button onClick={() => this.changeRoute("/registerBusiness")} className="navigation-button">Register Business</button>
