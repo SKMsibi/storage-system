@@ -65,13 +65,6 @@ passport.use(new LocalStrategy({
   }
 ))
 
-var cookieExtractor = function (req) {
-  var token = null;
-  if (req && req.headers.authorization) {
-    token = req.headers.authorization;
-  }
-  return token;
-};
 passport.use(new JWTStrategy({
   jwtFromRequest: cookieExtractor,
   secretOrKey: 'your_jwt_secret'
@@ -89,6 +82,14 @@ passport.use(new JWTStrategy({
     })
   }
 ));
+
+var cookieExtractor = function (req) {
+  var token = null;
+  if (req && req.headers.authorization) {
+    token = req.headers.authorization;
+  }
+  return token;
+};
 
 passport.serializeUser(function (user, cb) {
   cb(null, user.id);
@@ -230,7 +231,6 @@ app.post('/signUp', async function (req, res) {
     var userInfo = await helper.getUserInfo(req.body)
     const token = jwt.sign(userInfo, 'your_jwt_secret');
     res.json({ token }).status(201).end();
-    res.status(201).end();
   } catch (error) {
     console.log('error :', error);
     res.status(400).end();
