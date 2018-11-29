@@ -105,7 +105,6 @@ async function submitUnit(params) {
 async function registerUser(params) {
     var userExists = false;
     var { userName, email, role, password1 } = params;
-    console.log('object :', userName, email, role, password1);
     const userNames = await client.query('SELECT email from clients WHERE email = $1;', [email]);
     if (userNames.rowCount > 0) {
         userExists = false;
@@ -119,7 +118,7 @@ async function registerUser(params) {
 };
 async function getUserInfo(params) {
     var { email, password } = params;
-    const userInfo = await client.query('SELECT hashed_password from clients WHERE email = $1;', [email]);
+    const userInfo = await client.query('SELECT * from clients WHERE email = $1;', [email]);
     if (userInfo.rowCount <= 0) {
         userExists = false;
     } else {
