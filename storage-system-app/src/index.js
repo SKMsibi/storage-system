@@ -10,6 +10,7 @@ import LogIn from './components/log-in'
 import navbar from './components/navbar'
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
+import axios from 'axios';
 import './index.css';
 import store from './redux/store';
 
@@ -21,10 +22,18 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
     )} />
 )
 
+function checkTokenOnReload() {
+    axios.get('http://localhost:3003/check/jwt').then(response => {
+        if (response.status !== 200) {
+            sessionStorage.removeItem("jwtToken");
+        }
+    });
+}
 ReactDOM.render(
     <Provider store={store}>
         <Router>
             <div>
+                {checkTokenOnReload()}
                 <Route path="/" component={navbar} />
                 <Route exact path="/" component={App} />
                 <Route exact path="/signUp" component={App} />
