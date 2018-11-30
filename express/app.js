@@ -19,7 +19,7 @@ var connectionString = "postgres://sabelo:1230skm@localhost:5432/storage_system"
 const client = new pg.Client(connectionString);
 client.connect();
 
-var helper = require('./routes/functions');
+var DBFunctions = require('./routes/functions');
 
 app.use(require('express-session')(
   {
@@ -45,7 +45,7 @@ passport.use(new LocalStrategy({
 },
   (email, password, done) => {
     try {
-      helper.findUser(email).then((user, err) => {
+      DBFunctions.findUser(email).then((user, err) => {
         if (!user) {
           return done(null, false, { message: "Incorrect Email or Password." })
         }
@@ -65,12 +65,19 @@ passport.use(new LocalStrategy({
   }
 ))
 
+var cookieExtractor = function (req) {
+  var token = null;
+  if (req && req.headers.authorization) {
+    token = req.headers.authorization;
+  }
+  return token;
+};
 passport.use(new JWTStrategy({
   jwtFromRequest: cookieExtractor,
-  secretOrKey: 'your_jwt_secret'
+  secretOrKey: 'TestingStorage'
 },
   function (jwtPayload, done) {
-    helper.findUser(jwtPayload.email).then((user, err) => {
+    DBFunctions.findUser(jwtPayload.email).then((user, err) => {
       if (err) {
         return done(err)
       }
@@ -82,14 +89,6 @@ passport.use(new JWTStrategy({
     })
   }
 ));
-
-var cookieExtractor = function (req) {
-  var token = null;
-  if (req && req.headers.authorization) {
-    token = req.headers.authorization;
-  }
-  return token;
-};
 
 passport.serializeUser(function (user, cb) {
   cb(null, user.id);
@@ -109,7 +108,7 @@ function authenticationMiddleware(req, res, next) {
 
 app.post('/businessData', authenticationMiddleware, async function (req, res) {
   try {
-    await helper.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email)
+    await DBFunctions.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email)
     res.status(201).end();
   } catch (error) {
     res.status(500).send("sorry cant register business info : " + `${error}`).end();
@@ -117,7 +116,7 @@ app.post('/businessData', authenticationMiddleware, async function (req, res) {
 });
 app.get('/allAvailableLocations', authenticationMiddleware, async function (req, res) {
   try {
-    var allLocations = await helper.getAllAvailableLocations();
+    var allLocations = await DBFunctions.getAllAvailableLocations();
     res.send(allLocations).status(201).end();
   } catch (error) {
     res.status(500).end();
@@ -127,7 +126,7 @@ app.get('/allAvailableLocations', authenticationMiddleware, async function (req,
 app.get('/locations/:searchKey', authenticationMiddleware, async function (req, res) {
   try {
     var searchKey = req.params.searchKey;
-    var allLocations = await helper.getAllMatchingLocations(searchKey);
+    var allLocations = await DBFunctions.getAllMatchingLocations(searchKey);
     res.send(allLocations).status(201).end();
   } catch (error) {
     res.status(500).end();
@@ -136,7 +135,7 @@ app.get('/locations/:searchKey', authenticationMiddleware, async function (req, 
 app.get('/locationsForBusiness/:businessName', authenticationMiddleware, async function (req, res) {
   try {
     var businessName = req.params.businessName;
-    const allLocations = await helper.getAllLocationsForABusiness(businessName);
+    const allLocations = await DBFunctions.getAllLocationsForABusiness(businessName);
     res.send(allLocations).status(201).end();
   } catch (error) {
     res.status(500).end();
@@ -152,7 +151,7 @@ app.get('/unitTypes', authenticationMiddleware, async function (req, res) {
 });
 app.post('/unitTypes', authenticationMiddleware, async function (req, res) {
   try {
-    helper.insertUnitType(req.body)
+    DBFunctions.insertUnitType(req.body)
     res.status(201).end();
   } catch (error) {
     res.status(500).end();
@@ -161,7 +160,7 @@ app.post('/unitTypes', authenticationMiddleware, async function (req, res) {
 
 app.get('/businesses', authenticationMiddleware, async function (req, res) {
   try {
-    var businessNames = await helper.getAllBusinessNames();
+    var businessNames = await DBFunctions.getAllBusinessNames();
     res.status(200).send(businessNames).end();
   } catch (error) {
     res.status(500).end();
@@ -170,7 +169,7 @@ app.get('/businesses', authenticationMiddleware, async function (req, res) {
 
 app.get('/businessesWithLocations', authenticationMiddleware, async function (req, res) {
   try {
-    var businessNames = await helper.getAllBusinessWithLocations();
+    var businessNames = await DBFunctions.getAllBusinessWithLocations();
     res.status(200).send(businessNames).end();
   } catch (error) {
     res.status(500).end();
@@ -178,7 +177,7 @@ app.get('/businessesWithLocations', authenticationMiddleware, async function (re
 });
 app.get('/allUnits/:searchBy/:searchPhrase', authenticationMiddleware, async function (req, res) {
   try {
-    var allUnits = await helper.getUnits(req.params);
+    var allUnits = await DBFunctions.getUnits(req.params);
     res.status(200).send(allUnits).end()
   } catch (error) {
     console.log('error :', error);
@@ -187,7 +186,7 @@ app.get('/allUnits/:searchBy/:searchPhrase', authenticationMiddleware, async fun
 });
 app.post('/unit', authenticationMiddleware, async function (req, res) {
   try {
-    await helper.submitUnit(req.body);
+    await DBFunctions.submitUnit(req.body);
     res.status(201).end()
   } catch (error) {
     console.log('error :', error);
@@ -197,7 +196,7 @@ app.post('/unit', authenticationMiddleware, async function (req, res) {
 
 app.post('/businessLocation', authenticationMiddleware, async function (req, res) {
   try {
-    helper.insertBusinessLocation(req.body.businessName, req.body.address1, req.body.address2, req.body.city, req.body.region);
+    DBFunctions.insertBusinessLocation(req.body.businessName, req.body.address1, req.body.address2, req.body.city, req.body.region);
     res.status(201).end();
   } catch (error) {
     console.log('error :', error);
@@ -206,7 +205,7 @@ app.post('/businessLocation', authenticationMiddleware, async function (req, res
 });
 app.post('/submitBlocks', authenticationMiddleware, async function (req, res) {
   try {
-    await helper.insertBlocks(req.body);
+    await DBFunctions.insertBlocks(req.body);
     res.status(201).end();
   } catch (error) {
     console.log('error :', error);
@@ -216,7 +215,7 @@ app.post('/submitBlocks', authenticationMiddleware, async function (req, res) {
 app.get('/blocks/:businessName', authenticationMiddleware, async function (req, res) {
   try {
     var businessName = req.params["businessName"];
-    var allBlocks = await helper.getAllBlocks(businessName)
+    var allBlocks = await DBFunctions.getAllBlocks(businessName)
     res.status(201).send(allBlocks).end()
   } catch (error) {
     res.status(500).end()
@@ -224,12 +223,12 @@ app.get('/blocks/:businessName', authenticationMiddleware, async function (req, 
 });
 app.post('/signUp', async function (req, res) {
   try {
-    var signUserUp = await helper.registerUser(req.body)
+    var signUserUp = await DBFunctions.registerUser(req.body)
     if (!signUserUp) {
       res.status(204).end();
     }
-    var userInfo = await helper.getUserInfo(req.body)
-    const token = jwt.sign(userInfo, 'your_jwt_secret');
+    var userInfo = await DBFunctions.getUserInfo(req.body)
+    const token = jwt.sign(userInfo, 'TestingStorage');
     res.json({ token }).status(201).end();
   } catch (error) {
     console.log('error :', error);
@@ -249,7 +248,7 @@ app.post('/login', function (req, res, next) {
       if (err) {
         res.send(err).end();
       }
-      const token = jwt.sign(user, 'your_jwt_secret');
+      const token = jwt.sign(user, 'TestingStorage');
       res.json({ info, token }).status(201).end();
     });
   })(req, res);
