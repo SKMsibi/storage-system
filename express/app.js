@@ -228,7 +228,12 @@ app.post('/signUp', async function (req, res) {
       res.status(204).end();
     }
     var userInfo = await DBFunctions.getUserInfo(req.body)
-    const token = jwt.sign(userInfo, 'TestingStorage');
+    var userInfoForJWT = {
+      UserName: userInfo.user_name,
+      email: userInfo.email,
+      role: userInfo.role
+    }
+    const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: 60 * 60 * 24 });
     res.json({ token }).status(201).end();
   } catch (error) {
     console.log('error :', error);
@@ -248,11 +253,38 @@ app.post('/login', function (req, res, next) {
       if (err) {
         res.send(err).end();
       }
-      const token = jwt.sign(user, 'TestingStorage');
+      var userInfoForJWT = {
+        UserName: user.user_name,
+        email: user.email,
+        role: user.role
+      }
+      const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: 60 * 60 * 24 });
       res.json({ info, token }).status(201).end();
     });
   })(req, res);
 });
+
+app.get('/check/jwt', function (req, res) {
+  jwt.verify(req.headers.authorization, 'TestingStorage', async function (err, user) {
+    if (err) {
+      res.status(400).json({
+        message: 'Something Went wrong, please try again later.'
+      }).end();
+    };
+
+    var userInfo = await DBFunctions.getUserInfo(user);
+    console.log('userInfo :', userInfo);
+    if (userInfo) {
+      res.json({
+        user: user,
+      }).status(200).end();
+    } else {
+      res.status(400).json({
+        message: 'Something Went wrong, please try again later.'
+      }).end();
+    }
+  })
+})
 
 app.listen(3003, function () {
   console.log('web server listening on port 3003')
