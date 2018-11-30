@@ -37,7 +37,6 @@ export class RegisterBlocks extends Component {
         this.setState({ blocks: arrTemp, showBlocksInsert: true })
     }
     submitBlocks() {
-        console.log('object :', this.props.blocksData.InsertBlockForm.values);
         if (this.props.blocksData.InsertBlockForm.values) {
             this.props.submitBlocks(this.props.blocksData.InsertBlockForm.values, this.props.selectedBusiness, this.props.selectLocation);
             this.props.history.push("/insertUnitType");

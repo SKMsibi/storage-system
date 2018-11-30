@@ -135,7 +135,6 @@ async function logUserIn(params) {
         var comp = await bcrypt.compare(password, userInfo.rows[0].hashed_password);
         userExists = comp;
     }
-    console.log('userExists :', userExists);
     return userExists;
 };
 async function findUser(userEmail) {

@@ -75,8 +75,6 @@ class viewInfo extends Component {
         this.setState({ displayUnits: true });
     }
     render() {
-        console.log('this.props :', this.props);
-        console.log('this.state :', this.state);
         return (
             <div className="App-container">
                 <h3>View all units</h3>
