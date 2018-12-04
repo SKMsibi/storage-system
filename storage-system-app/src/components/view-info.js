@@ -108,10 +108,6 @@ class viewInfo extends Component {
                     </select>)}
                 <button onClick={() => this.getData()} ref="getButton">Go</button>
                 {this.state.displayUnits && (
-                    this.props.units.length <= 0 ? <p>Sorry No units are available for the selected options.</p> : this.props.units.map(item =>
-                        <h4 key={this.props.units.indexOf(item)}>{item.name}</h4>)
-                )}
-                {this.state.displayUnits && (
                     <ViewUnitsTable />
                 )}
             </div >
