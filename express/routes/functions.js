@@ -49,7 +49,7 @@ async function getAllUnitsByUnitTypeId(unitTypeId) {
     return units.rows;
 };
 async function getAllUnitsByBusinessName(businessName) {
-    const units = await client.query("SELECT * FROM business INNER JOIN Unit_types on business.id = Unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id WHERE business.name = $1;", [businessName]);
+    const units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName FROM business INNER JOIN Locations on business.id = Locations.business_id INNER JOIN Blocks on Locations.id = Blocks.locations_id INNER JOIN Unit_types on business.id = Unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id WHERE business.name = $1;", [businessName]);
     return units.rows
 };
 async function getAllLocationsForABusiness(businessName) {
@@ -70,18 +70,19 @@ async function getAllUnitsByLocation(location) {
     return units.rows;
 };
 async function getUnits(params) {
+    const { searchBy, searchPhrase } = params;
     var allUnits = [];
-    if (params.searchBy === "unit Types") {
-        var unitTypes = await getAllUnitTypes(params.searchPhrase);
+    if (searchBy === "unit Types") {
+        var unitTypes = await getAllUnitTypes(searchPhrase);
         for (let index = 0; index < unitTypes.length; index++) {
             var unit = await getAllUnitsByUnitTypeId(unitTypes[index].id);
             allUnits = [...allUnits, ...unit]
         }
-    } else if (params.searchBy === "business") {
-        var units = await getAllUnitsByBusinessName(params.searchPhrase);
+    } else if (searchBy === "business") {
+        var units = await getAllUnitsByBusinessName(searchPhrase);
         allUnits = [...units]
-    } else if (params.searchBy === "locations") {
-        var units = await getAllUnitsByLocation(params.searchPhrase);
+    } else if (searchBy === "locations") {
+        var units = await getAllUnitsByLocation(searchPhrase);
         allUnits = [...units]
     }
     return allUnits;
@@ -117,7 +118,7 @@ async function registerUser(params) {
     return userExists;
 };
 async function getUserInfo(params) {
-    var { email, password } = params;
+    var { email } = params;
     const userInfo = await client.query('SELECT * from clients WHERE email = $1;', [email]);
     if (userInfo.rowCount <= 0) {
         userExists = false;
