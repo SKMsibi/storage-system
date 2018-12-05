@@ -84,7 +84,7 @@ passport.use(new JWTStrategy({
       if (!user) {
         return done(null, false)
       } else {
-        return done(null, false);
+        return done(null, user);
       }
     })
   }
@@ -94,7 +94,7 @@ passport.serializeUser(function (user, cb) {
   cb(null, user.id);
 });
 passport.deserializeUser(function (id, cb) {
-  cb(null, user);
+  cb(null, id);
 });
 
 app.use(passport.initialize());
@@ -243,15 +243,14 @@ app.post('/signUp', async function (req, res) {
 
 app.post('/login', function (req, res, next) {
   passport.authenticate('local', { session: true }, (err, user, info) => {
-    if (err || !user) {
-      res.status(400).json({
-        message: 'Something Went wrong, please try again later.',
-        user: user
-      }).end();
+    if (err) {
+      res.status(204).end();
+    } else if (!user) {
+      res.status(204).end();
     }
     req.login(user, { session: true }, (err) => {
       if (err) {
-        res.send(err).end();
+        res.send(err).status(204).end();
       }
       var userInfoForJWT = {
         UserName: user.user_name,
@@ -259,7 +258,7 @@ app.post('/login', function (req, res, next) {
         role: user.role
       }
       const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: 60 * 60 * 24 });
-      res.json({ info, token }).status(201).end();
+      res.json({ info, token }).status(202).end();
     });
   })(req, res);
 });
@@ -267,19 +266,17 @@ app.post('/login', function (req, res, next) {
 app.get('/check/jwt', function (req, res) {
   jwt.verify(req.headers.authorization, 'TestingStorage', async function (err, user) {
     if (err) {
-      res.status(400).json({
+      res.status(204).json({
         message: 'Something Went wrong, please try again later.'
       }).end();
     };
-
     var userInfo = await DBFunctions.getUserInfo(user);
-    console.log('userInfo :', userInfo);
     if (userInfo) {
       res.json({
         user: user,
-      }).status(200).end();
+      }).status(202).end();
     } else {
-      res.status(400).json({
+      res.status(204).json({
         message: 'Something Went wrong, please try again later.'
       }).end();
     }
