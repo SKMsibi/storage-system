@@ -14,21 +14,24 @@ import axios from 'axios';
 import './index.css';
 import store from './redux/store';
 
+
+function checkTokenOnReload() {
+    axios.get('http://localhost:3003/check/jwt').then(response => {
+        if (response.status === 202) {
+            return true
+        } else {
+            sessionStorage.removeItem("jwtToken");
+            return false;
+        }
+    });
+}
 const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={props => (
-        sessionStorage.getItem("jwtToken")
-            ? <Component {...props} />
+        sessionStorage.getItem("jwtToken") ? <Component {...props} />
             : <Redirect to={{ pathname: '/login' }} />
     )} />
 )
 
-function checkTokenOnReload() {
-    axios.get('http://localhost:3003/check/jwt').then(response => {
-        if (response.status !== 200) {
-            sessionStorage.removeItem("jwtToken");
-        }
-    });
-}
 ReactDOM.render(
     <Provider store={store}>
         <Router>
