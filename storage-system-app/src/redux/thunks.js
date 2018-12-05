@@ -155,10 +155,10 @@ export function signIn(userInfo) {
         try {
             var requestResults = await axios.post('http://localhost:3003/signUp', userInfo);
             if (requestResults.status === 204) {
-                console.log('requestResults.status :', requestResults.data);
                 dispatch({ type: "ERROR_CREATED_SIGNING_IN", newValue: "email already exists!" })
             } else {
                 dispatch({ type: "REMOVE_ERRORS" });
+                sessionStorage.setItem("jwtToken", requestResults.data.token);
             }
         } catch (error) {
             console.log('error :', error);
@@ -170,11 +170,16 @@ export function logIn(userInfo) {
     return async (dispatch) => {
         try {
             var requestResults = await axios.post('http://localhost:3003/logIn', userInfo);
-            if (requestResults.status === 204) {
-                dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "User does not exists!" })
-            } else {
+            if (requestResults.status === 202) {
                 dispatch({ type: "REMOVE_ERRORS" });
                 sessionStorage.setItem("jwtToken", requestResults.data.token);
+            } else if (requestResults.status === 200) {
+                dispatch({ type: "REMOVE_ERRORS" });
+                sessionStorage.setItem("jwtToken", requestResults.data.token);
+            } else if (requestResults.status === 204) {
+                dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "Wrong Email or password." })
+            } else {
+                dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
             }
         } catch (error) {
             console.log('error is:', error);
