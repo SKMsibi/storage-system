@@ -66,7 +66,7 @@ async function getAllAvailableLocations() {
     return locations.rows;
 };
 async function getAllUnitsByLocation(location) {
-    const units = await client.query("SELECT * FROM locations INNER JOIN business on locations.business_id = business.id INNER JOIN unit_types on business.id = unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id  WHERE region = $1  AND city = $2 AND address1 = $3 AND address2 = $4;", location.split(","));
+    const units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName FROM locations INNER JOIN blocks on locations.id = blocks.locations_id INNER JOIN business on locations.business_id = business.id INNER JOIN unit_types on business.id = unit_types.business_id INNER JOIN units on Unit_types.id = units.unit_type_id WHERE region = $1  AND city = $2 AND address1 = $3 AND address2 = $4;", location.split(","));
     return units.rows;
 };
 async function getUnits(params) {
