@@ -14,20 +14,27 @@ import axios from 'axios';
 import './index.css';
 import store from './redux/store';
 
-
-function checkTokenOnReload() {
-    axios.get('http://localhost:3003/check/jwt').then(response => {
-        if (response.status === 202) {
-            return true
-        } else {
-            sessionStorage.removeItem("jwtToken");
-            return false;
-        }
-    });
+function checkTokenInSession() {
+    var token = sessionStorage.getItem("jwtToken");
+    if (token) {
+        return true;
+    } else {
+        sessionStorage.removeItem("jwtToken");
+        return false;
+    }
+}
+async function checkTokenOnReload() {
+    var results = await axios.get('http://localhost:3003/check/jwt');
+    if (results.status === 202) {
+        return true;
+    } else {
+        sessionStorage.removeItem("jwtToken");
+        return false;
+    }
 }
 const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={props => (
-        sessionStorage.getItem("jwtToken") ? <Component {...props} />
+        checkTokenInSession() ? <Component {...props} />
             : <Redirect to={{ pathname: '/login' }} />
     )} />
 )
@@ -36,7 +43,9 @@ ReactDOM.render(
     <Provider store={store}>
         <Router>
             <div>
-                {checkTokenOnReload()}
+                {(async function () {
+                    await checkTokenOnReload()
+                })() ? true : true}
                 <Route path="/" component={navbar} />
                 <Route exact path="/" component={App} />
                 <Route exact path="/signUp" component={App} />
