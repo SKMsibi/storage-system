@@ -272,9 +272,9 @@ app.get('/check/jwt', function (req, res) {
     };
     var userInfo = await DBFunctions.getUserInfo(user);
     if (userInfo) {
-      res.json({
+      res.status(202).json({
         user: user,
-      }).status(202).end();
+      }).end();
     } else {
       res.status(204).json({
         message: 'Something Went wrong, please try again later.'
