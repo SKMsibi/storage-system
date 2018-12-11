@@ -101,9 +101,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function authenticationMiddleware(req, res, next) {
-  if (passport.authenticate('jwt', { session: true })) {
+  jwt.verify(req.headers.authorization, "TestingStorage", function (err, decoded) {
+    if (err) return res.status(302).send({ auth: false, message: 'Failed to authenticate token.' });
+    req.loggedInUser = decoded;
     next()
-  }
+  })
 }
 
 app.post('/businessData', authenticationMiddleware, async function (req, res) {
@@ -111,7 +113,7 @@ app.post('/businessData', authenticationMiddleware, async function (req, res) {
     await DBFunctions.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email)
     res.status(201).end();
   } catch (error) {
-    res.status(500).send("sorry cant register business info : " + `${error}`).end();
+    res.status(203).send("sorry cant register business info : " + `${error}`).end();
   }
 });
 app.get('/allAvailableLocations', authenticationMiddleware, async function (req, res) {
@@ -119,7 +121,7 @@ app.get('/allAvailableLocations', authenticationMiddleware, async function (req,
     var allLocations = await DBFunctions.getAllAvailableLocations();
     res.send(allLocations).status(201).end();
   } catch (error) {
-    res.status(500).end();
+    res.status(203).end();
   }
 });
 
@@ -129,7 +131,7 @@ app.get('/locations/:searchKey', authenticationMiddleware, async function (req, 
     var allLocations = await DBFunctions.getAllMatchingLocations(searchKey);
     res.send(allLocations).status(201).end();
   } catch (error) {
-    res.status(500).end();
+    res.status(203).end();
   }
 });
 app.get('/locationsForBusiness/:businessName', authenticationMiddleware, async function (req, res) {
@@ -138,7 +140,7 @@ app.get('/locationsForBusiness/:businessName', authenticationMiddleware, async f
     const allLocations = await DBFunctions.getAllLocationsForABusiness(businessName);
     res.send(allLocations).status(201).end();
   } catch (error) {
-    res.status(500).end();
+    res.status(203).end();
   }
 });
 app.get('/unitTypes', authenticationMiddleware, async function (req, res) {
@@ -146,7 +148,7 @@ app.get('/unitTypes', authenticationMiddleware, async function (req, res) {
     const units = await client.query(`SELECT name, length, width, height FROM unit_types;`);
     res.send(units.rows).status(201).end();
   } catch (error) {
-    res.status(500).end();
+    res.status(203).end();
   }
 });
 app.post('/unitTypes', authenticationMiddleware, async function (req, res) {
@@ -154,7 +156,7 @@ app.post('/unitTypes', authenticationMiddleware, async function (req, res) {
     DBFunctions.insertUnitType(req.body)
     res.status(201).end();
   } catch (error) {
-    res.status(500).end();
+    res.status(203).end();
   }
 });
 
@@ -163,7 +165,7 @@ app.get('/businesses', authenticationMiddleware, async function (req, res) {
     var businessNames = await DBFunctions.getAllBusinessNames();
     res.status(200).send(businessNames).end();
   } catch (error) {
-    res.status(500).end();
+    res.status(203).end();
   }
 });
 
@@ -172,7 +174,7 @@ app.get('/businessesWithLocations', authenticationMiddleware, async function (re
     var businessNames = await DBFunctions.getAllBusinessWithLocations();
     res.status(200).send(businessNames).end();
   } catch (error) {
-    res.status(500).end();
+    res.status(203).end();
   }
 });
 app.get('/allUnits/:searchBy/:searchPhrase', authenticationMiddleware, async function (req, res) {
@@ -181,7 +183,7 @@ app.get('/allUnits/:searchBy/:searchPhrase', authenticationMiddleware, async fun
     res.status(200).send(allUnits).end()
   } catch (error) {
     console.log('error :', error);
-    res.status(500).end()
+    res.status(203).end()
   }
 });
 app.post('/unit', authenticationMiddleware, async function (req, res) {
@@ -190,7 +192,7 @@ app.post('/unit', authenticationMiddleware, async function (req, res) {
     res.status(201).end()
   } catch (error) {
     console.log('error :', error);
-    res.status(500).end()
+    res.status(203).end()
   }
 });
 
@@ -200,7 +202,7 @@ app.post('/businessLocation', authenticationMiddleware, async function (req, res
     res.status(201).end();
   } catch (error) {
     console.log('error :', error);
-    res.status(500).send("sorry cant register business address : " + `${error}`).end();
+    res.status(203).send("sorry cant register business address : " + `${error}`).end();
   }
 });
 app.post('/submitBlocks', authenticationMiddleware, async function (req, res) {
@@ -209,7 +211,7 @@ app.post('/submitBlocks', authenticationMiddleware, async function (req, res) {
     res.status(201).end();
   } catch (error) {
     console.log('error :', error);
-    res.status(500).send("sorry cant register business address : " + `${error}`).end();
+    res.status(203).send("sorry cant register business address : " + `${error}`).end();
   }
 });
 app.get('/blocks/:businessName', authenticationMiddleware, async function (req, res) {
@@ -218,7 +220,17 @@ app.get('/blocks/:businessName', authenticationMiddleware, async function (req, 
     var allBlocks = await DBFunctions.getAllBlocks(businessName)
     res.status(201).send(allBlocks).end()
   } catch (error) {
-    res.status(500).end()
+    res.status(203).end()
+  }
+});
+app.post('/unit/order', authenticationMiddleware, async function (req, res) {
+  try {
+    var unitDetails = req.body;
+    await DBFunctions.orderUnit(unitDetails, req.loggedInUser)
+    res.status(201).end()
+  } catch (error) {
+    console.log('error :', error);
+    res.status(203).end()
   }
 });
 app.post('/signUp', async function (req, res) {
@@ -233,7 +245,7 @@ app.post('/signUp', async function (req, res) {
       email: userInfo.email,
       role: userInfo.role
     }
-    const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: 60 * 60 * 24 });
+    const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: '24h' });
     res.json({ token }).status(201).end();
   } catch (error) {
     console.log('error :', error);
@@ -257,7 +269,7 @@ app.post('/login', function (req, res, next) {
         email: user.email,
         role: user.role
       }
-      const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: 60 * 60 * 24 });
+      const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: '24h' });
       res.json({ info, token }).status(202).end();
     });
   })(req, res);
