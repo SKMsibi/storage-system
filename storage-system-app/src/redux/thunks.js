@@ -10,15 +10,7 @@ import * as actions from "./actions";
     }
 })();
 
-export function getAllAvailableUnits(searchBy, searchPhrase) {
-    return async (dispatch) => {
-        console.log('searchBy, searchPhrase :', searchBy, searchPhrase);
-        var allUnits = await axios.get(`http://localhost:3003/allUnits/${searchBy}/${searchPhrase}`);
-        if (allUnits.data) {
-            dispatch(actions.getAllUnitsForDisplay(allUnits.data));
-        }
-    };
-};
+
 export function getBusinessesForUnits() {
     return async (dispatch) => {
         var allTheBusiness = await axios.get('http://localhost:3003/businesses');
@@ -170,6 +162,7 @@ export function logIn(userInfo) {
     return async (dispatch) => {
         try {
             var requestResults = await axios.post('http://localhost:3003/logIn', userInfo);
+            console.log('requestResults.status :', requestResults.status);
             if (requestResults.status === 202) {
                 dispatch({ type: "REMOVE_ERRORS" });
                 sessionStorage.setItem("jwtToken", requestResults.data.token);
@@ -187,3 +180,23 @@ export function logIn(userInfo) {
         }
     };
 };
+export function getAllAvailableUnits(searchBy, searchPhrase) {
+    return async (dispatch) => {
+        var allUnits = await axios.get(`http://localhost:3003/allUnits/${searchBy}/${searchPhrase}`);
+        if (allUnits.data) {
+            dispatch(actions.getAllUnitsForDisplay(allUnits.data));
+        }
+    };
+};
+
+export function PlaceOrder(unitDetails) {
+    return async (dispatch) => {
+        try {
+            await axios.post('http://localhost:3003/unit/order', unitDetails);
+        } catch (error) {
+            // console.log('error is:', error);
+            // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
+        }
+    };
+};
+
