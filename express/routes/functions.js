@@ -45,11 +45,11 @@ async function getAllUnitTypes(unitTypeInfo) {
     return unitTypes.rows;
 };
 async function getAllUnitsByUnitTypeId(unitTypeId) {
-    var units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName FROM units INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE NOT EXISTS (SELECT * FROM client_storages WHERE client_storages.unit_id = units.id) AND Unit_type_id = $1", [unitTypeId]);
+    var units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName, units.id FROM units INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE NOT EXISTS (SELECT * FROM client_storages WHERE client_storages.unit_id = units.id) AND Unit_type_id = $1", [unitTypeId]);
     return units.rows;
 };
 async function getAllUnitsByBusinessName(businessName) {
-    const units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName FROM  units INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id  WHERE NOT EXISTS (SELECT * FROM client_storages WHERE client_storages.unit_id = units.id) AND business.name = $1;", [businessName]);
+    const units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName, units.id FROM  units INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id  WHERE NOT EXISTS (SELECT * FROM client_storages WHERE client_storages.unit_id = units.id) AND business.name = $1;", [businessName]);
     return units.rows
 };
 async function getAllLocationsForABusiness(businessName) {
@@ -66,7 +66,7 @@ async function getAllAvailableLocations() {
     return locations.rows;
 };
 async function getAllUnitsByLocation(location) {
-    const units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName FROM units INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE NOT EXISTS (SELECT * FROM client_storages WHERE client_storages.unit_id = units.id) AND region = $1  AND city = $2 AND address1 = $3 AND address2 = $4;", location.split(","));
+    const units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName, units.id FROM units INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE NOT EXISTS (SELECT * FROM client_storages WHERE client_storages.unit_id = units.id) AND region = $1  AND city = $2 AND address1 = $3 AND address2 = $4;", location.split(","));
     return units.rows;
 };
 async function getUnits(params) {
@@ -145,11 +145,13 @@ async function findUser(userEmail) {
     }
     return userInfo.rows[0];
 }
-async function orderUnit(details) {
-    console.log('details from function:', details);
-
-    // const units = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, units.name As unitsName FROM  units INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE business.name = $1;", [businessName]);
-    // return units.rows
+async function orderUnit(unitDetails, userDetails) {
+    const unit = await client.query("SELECT id, name, unit_type_id, block_id, created_at, updated_at FROM public.units WHERE id = $1;", [unitDetails.id]);
+    const user = await findUser(userDetails.email);
+    const unitOrder = await client.query("INSERT INTO client_storages(client_id, unit_id)VALUES ($1, $2);", [user.id, unit.rows[0].id]);
+    if (unitOrder.rowCount === 1) {
+        return true;
+    } else return false;
 };
 
 module.exports = {
