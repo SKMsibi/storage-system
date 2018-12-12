@@ -1,13 +1,17 @@
 import axios from 'axios';
 import * as actions from "./actions";
 
-(function () {
+function setHeaders() {
     var token = sessionStorage.getItem("jwtToken");
     if (token) {
         axios.defaults.headers.common['Authorization'] = token;
     } else {
         axios.defaults.headers.common['Authorization'] = null;
     }
+}
+
+(function () {
+    setHeaders();
 })();
 
 
@@ -151,6 +155,7 @@ export function signIn(userInfo) {
             } else {
                 dispatch({ type: "REMOVE_ERRORS" });
                 sessionStorage.setItem("jwtToken", requestResults.data.token);
+                setHeaders();
             }
         } catch (error) {
             console.log('error :', error);
@@ -166,9 +171,11 @@ export function logIn(userInfo) {
             if (requestResults.status === 202) {
                 dispatch({ type: "REMOVE_ERRORS" });
                 sessionStorage.setItem("jwtToken", requestResults.data.token);
+                setHeaders();
             } else if (requestResults.status === 200) {
                 dispatch({ type: "REMOVE_ERRORS" });
                 sessionStorage.setItem("jwtToken", requestResults.data.token);
+                setHeaders();
             } else if (requestResults.status === 204) {
                 dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "Wrong Email or password." })
             } else {
@@ -193,6 +200,16 @@ export function PlaceOrder(unitDetails) {
     return async (dispatch) => {
         try {
             await axios.post('http://localhost:3003/unit/order', unitDetails);
+        } catch (error) {
+            // console.log('error is:', error);
+            // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
+        }
+    };
+};
+export function getUserUnits() {
+    return async (dispatch) => {
+        try {
+            await axios.get('http://localhost:3003/user/units');
         } catch (error) {
             // console.log('error is:', error);
             // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
