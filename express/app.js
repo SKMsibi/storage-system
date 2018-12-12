@@ -65,30 +65,30 @@ passport.use(new LocalStrategy({
   }
 ))
 
-var cookieExtractor = function (req) {
-  var token = null;
-  if (req && req.headers.authorization) {
-    token = req.headers.authorization;
-  }
-  return token;
-};
-passport.use(new JWTStrategy({
-  jwtFromRequest: cookieExtractor,
-  secretOrKey: 'TestingStorage'
-},
-  function (jwtPayload, done) {
-    DBFunctions.findUser(jwtPayload.email).then((user, err) => {
-      if (err) {
-        return done(err)
-      }
-      if (!user) {
-        return done(null, false)
-      } else {
-        return done(null, user);
-      }
-    })
-  }
-));
+// var cookieExtractor = function (req) {
+//   var token = null;
+//   if (req && req.headers.authorization) {
+//     token = req.headers.authorization;
+//   }
+//   return token;
+// };
+// passport.use(new JWTStrategy({
+//   jwtFromRequest: cookieExtractor,
+//   secretOrKey: 'TestingStorage'
+// },
+//   function (jwtPayload, done) {
+//     DBFunctions.findUser(jwtPayload.email).then((user, err) => {
+//       if (err) {
+//         return done(err)
+//       }
+//       if (!user) {
+//         return done(null, false)
+//       } else {
+//         return done(null, user);
+//       }
+//     })
+//   }
+// ));
 
 passport.serializeUser(function (user, cb) {
   cb(null, user.id);
@@ -261,9 +261,9 @@ app.post('/login', function (req, res, next) {
       res.status(204).end();
     }
     req.login(user, { session: true }, (err) => {
-      if (err) {
-        res.send(err).status(204).end();
-      }
+      // if (err) {
+      //   res.send(err).status(204).end();
+      // }
       var userInfoForJWT = {
         UserName: user.user_name,
         email: user.email,
@@ -274,6 +274,7 @@ app.post('/login', function (req, res, next) {
     });
   })(req, res);
 });
+
 
 app.get('/check/jwt', function (req, res) {
   jwt.verify(req.headers.authorization, 'TestingStorage', async function (err, user) {
@@ -293,6 +294,18 @@ app.get('/check/jwt', function (req, res) {
       }).end();
     }
   })
+})
+
+app.get('/user/units', authenticationMiddleware, async function (req, res) {
+  var units = await DBFunctions.findClientUnits(req.loggedInUser.email);
+  if (!units) {
+    res.status(204).end()
+  }
+  if (units.length <= 0) {
+    res.status(203).end();
+  } else {
+    res.status(200).json({ units: units }).end();
+  }
 })
 
 app.listen(3003, function () {
