@@ -153,8 +153,17 @@ async function orderUnit(unitDetails, userDetails) {
         return true;
     } else return false;
 };
+async function findClientUnits(clientEmail) {
+    const userInfo = await client.query('SELECT * from clients WHERE email = $1;', [clientEmail]);
+    if (userInfo.rowCount <= 0) {
+        return false;
+    }
+    const clientUnits = await client.query('SELECT * FROM public.units INNER JOIN client_storages on units.id = client_storages.unit_id WHERE client_id = $1;', [userInfo.rows[0].id]);
+    return clientUnits.rows;
+}
 
 module.exports = {
+    findClientUnits,
     findUser,
     logUserIn,
     registerUser,
