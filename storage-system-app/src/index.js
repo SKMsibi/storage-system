@@ -4,8 +4,9 @@ import App from './App';
 import RegisterBlocks from './components/register-blocks';
 import InsertUnit from './components/insert-unit';
 import InsertLocation from './components/insert-location';
-import viewInfo from "./components/view-info";
+import viewInfo from "./components/renter-components/view-info";
 import RegisterBusiness from './components/register-business';
+import ViewUserUnits from './components/renter-components/view-user-units'
 import LogIn from './components/log-in'
 import navbar from './components/navbar'
 import { Provider } from 'react-redux';
@@ -54,6 +55,7 @@ ReactDOM.render(
                 <PrivateRoute exact path="/insertUnitType" component={InsertUnit} />
                 <PrivateRoute exact path="/insertLocation" component={InsertLocation} />
                 <PrivateRoute exact path="/displayUnits" component={viewInfo} />
+                <PrivateRoute exact path="/displayUserUnits" component={ViewUserUnits} />
                 <PrivateRoute exact path="/registerBusiness" component={RegisterBusiness} />
             </div>
         </Router>
