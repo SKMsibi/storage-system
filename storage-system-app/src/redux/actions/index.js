@@ -60,6 +60,8 @@ export function updateSearchBy(category) {
 export function updateSearchPhrase(phrase) {
     return { type: "UPDATE_SEARCH_PHRASE", newValue: phrase }
 };
-
+export function getAllUserUnits(units) {
+    return { type: "GET_ALL_USER_UNITS", newValue: units }
+};
 
 
