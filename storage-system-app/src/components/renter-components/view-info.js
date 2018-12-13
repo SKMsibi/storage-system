@@ -108,7 +108,7 @@ class viewInfo extends Component {
                     </select>)}
                 <button onClick={() => this.getData()} ref="getButton">Go</button>
                 {this.state.displayUnits && (
-                    <ViewUnitsTable />
+                    <ViewUnitsTable units={this.props.units} showOrderButton={true} />
                 )}
             </div >
         )
@@ -136,6 +136,7 @@ const mapDispatchToProps = (dispatch) => {
         }
     }
 }
+
 const mapStateToProps = (state) => {
     return {
         state: state.displayUnits,
