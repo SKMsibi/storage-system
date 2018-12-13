@@ -209,7 +209,8 @@ export function PlaceOrder(unitDetails) {
 export function getUserUnits() {
     return async (dispatch) => {
         try {
-            await axios.get('http://localhost:3003/user/units');
+            var userUnits = await axios.get('http://localhost:3003/user/units');
+            dispatch(actions.getAllUserUnits(userUnits.data.units))
         } catch (error) {
             // console.log('error is:', error);
             // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
