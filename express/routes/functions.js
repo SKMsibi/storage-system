@@ -158,7 +158,7 @@ async function findClientUnits(clientEmail) {
     if (userInfo.rowCount <= 0) {
         return false;
     }
-    const clientUnits = await client.query('SELECT * FROM public.units INNER JOIN client_storages on units.id = client_storages.unit_id WHERE client_id = $1;', [userInfo.rows[0].id]);
+    const clientUnits = await client.query('SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, client_storages.created_at AS bookDate,units.name As unitsName, units.id FROM units INNER JOIN client_storages on units.id = client_storages.unit_id INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE client_id = $1;', [userInfo.rows[0].id]);
     return clientUnits.rows;
 }
 
