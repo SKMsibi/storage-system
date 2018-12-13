@@ -7,6 +7,12 @@ class ViewUnitsTable extends Component {
     placeOrder(details) {
         this.props.placeOrder(details);
     }
+    formatDate(date) {
+        var daysOfTheWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var monthsOfTheYear = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var date = new Date(date);
+        return `${date.getHours()}:${date.getMinutes()} ${daysOfTheWeek[date.getDay()]} ${date.getDate()}-${monthsOfTheYear[date.getMonth()]}-${date.getYear()} `
+    }
     render() {
         return (
             <div>
@@ -23,7 +29,8 @@ class ViewUnitsTable extends Component {
                                 <th>height</th>
                                 <th>Region</th>
                                 <th>City</th>
-                                <th></th>
+                                <th>{this.props.showOrderButton ? null : "booked date"}</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -38,7 +45,7 @@ class ViewUnitsTable extends Component {
                                     <td>{singleUnit.height}</td>
                                     <td>{singleUnit.region}</td>
                                     <td>{singleUnit.city}</td>
-                                    <td><button onClick={() => this.placeOrder(singleUnit)}>Order</button></td>
+                                    <td>{this.props.showOrderButton ? < button onClick={() => this.placeOrder(singleUnit)}>Order</button> : this.formatDate(singleUnit.bookdate)}</td>
                                 </tr>
                             )}
                         </tbody>
@@ -48,11 +55,7 @@ class ViewUnitsTable extends Component {
         )
     }
 }
-const mapStateToProps = (state) => {
-    return {
-        units: state.displayUnits.allUnits
-    }
-}
+
 const mapDispatchToProps = (dispatch) => {
     return {
         placeOrder: (unitDetails) => {
@@ -60,4 +63,4 @@ const mapDispatchToProps = (dispatch) => {
         }
     }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(ViewUnitsTable);
+export default connect(null, mapDispatchToProps)(ViewUnitsTable);
