@@ -1,23 +1,28 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { PlaceOrder } from '../redux/thunks'
+import { PlaceOrder, removeOrder } from '../redux/thunks'
 import "../App.css"
 
 class ViewUnitsTable extends Component {
+    removeUnitOrder(details) {
+        this.props.removeUnits(details)
+        this.props.updateAvailable();
+    }
     placeOrder(details) {
         this.props.placeOrder(details);
+        this.props.updateAvailable();
     }
     formatDate(date) {
         var daysOfTheWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         var monthsOfTheYear = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        var date = new Date(date);
-        return `${date.getHours()}:${date.getMinutes()} ${daysOfTheWeek[date.getDay()]} ${date.getDate()}-${monthsOfTheYear[date.getMonth()]}-${date.getYear()} `
+        var newDate = new Date(date);
+        return { time: `${newDate.getHours()}:${newDate.getMinutes()}`, day: `${daysOfTheWeek[newDate.getDay()]}`, date: `${newDate.getDate()}-${monthsOfTheYear[newDate.getMonth()]}-${newDate.getYear()}` }
     }
     render() {
         return (
             <div>
                 {this.props.units.length <= 0 ? <h4>Sorry No units are available for the selected options.</h4> :
-                    <table key="unitsTable">
+                    <table key="unitsTable" className="unitsTable">
                         <thead>
                             <tr>
                                 <th>No.</th>
@@ -29,13 +34,14 @@ class ViewUnitsTable extends Component {
                                 <th>height</th>
                                 <th>Region</th>
                                 <th>City</th>
-                                <th>{this.props.showOrderButton ? null : "booked date"}</th>
-
+                                {this.props.showOrderButton ? null : <th>Order date</th>}
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.units.map(singleUnit =>
-                                <tr key={this.props.units.indexOf(singleUnit)}>
+                            {this.props.units.map(singleUnit => {
+                                var dateFormated = this.formatDate(singleUnit.bookdate)
+                                return <tr key={this.props.units.indexOf(singleUnit)}>
                                     <td>{this.props.units.indexOf(singleUnit) + 1}</td>
                                     <td>{singleUnit.unitsname}</td>
                                     <td>{singleUnit.blockname}</td>
@@ -45,8 +51,10 @@ class ViewUnitsTable extends Component {
                                     <td>{singleUnit.height}</td>
                                     <td>{singleUnit.region}</td>
                                     <td>{singleUnit.city}</td>
-                                    <td>{this.props.showOrderButton ? < button onClick={() => this.placeOrder(singleUnit)}>Order</button> : this.formatDate(singleUnit.bookdate)}</td>
+                                    {this.props.showOrderButton ? null : <td>{dateFormated.time}<br />{dateFormated.day}<br />{dateFormated.date}</td>}
+                                    <td>< button onClick={() => this.props.showOrderButton ? this.placeOrder(singleUnit) : this.removeUnitOrder(singleUnit)}>{this.props.showOrderButton ? "Order" : "Remove Order"}</button> </td>
                                 </tr>
+                            }
                             )}
                         </tbody>
                     </table>
@@ -60,6 +68,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         placeOrder: (unitDetails) => {
             dispatch(PlaceOrder(unitDetails))
+        },
+        removeUnits: (unitDetails) => {
+            dispatch(removeOrder(unitDetails))
         }
     }
 }
