@@ -87,6 +87,7 @@ input{
 
 table {
   font-family: arial, sans-serif;
+  font-size: 1.2vmax;
   border-collapse: collapse;
   width: 100%;
 }
