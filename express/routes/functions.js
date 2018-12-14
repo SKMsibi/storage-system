@@ -163,7 +163,7 @@ async function findClientUnits(clientEmail) {
 }
 
 async function removeClientUnit(unitDetails) {
-    await client.query('DELETE FROM client_storages WHERE id = $1;', [unitDetails.id]);
+    await client.query('DELETE FROM client_storages WHERE unit_id = $1;', [unitDetails.id]);
     return true
 }
 
