@@ -162,7 +162,13 @@ async function findClientUnits(clientEmail) {
     return clientUnits.rows;
 }
 
+async function removeClientUnit(unitDetails) {
+    await client.query('DELETE FROM client_storages WHERE id = $1;', [unitDetails.id]);
+    return true
+}
+
 module.exports = {
+    removeClientUnit,
     findClientUnits,
     findUser,
     logUserIn,
