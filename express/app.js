@@ -259,19 +259,20 @@ app.post('/login', function (req, res, next) {
       res.status(204).end();
     } else if (!user) {
       res.status(204).end();
+    } else {
+      req.login(user, { session: true }, (err) => {
+        if (err) {
+          res.send(err).status(204).end();
+        }
+        var userInfoForJWT = {
+          UserName: user.user_name,
+          email: user.email,
+          role: user.role
+        }
+        const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: '24h' });
+        res.json({ info, token }).status(202).end();
+      });
     }
-    req.login(user, { session: true }, (err) => {
-      // if (err) {
-      //   res.send(err).status(204).end();
-      // }
-      var userInfoForJWT = {
-        UserName: user.user_name,
-        email: user.email,
-        role: user.role
-      }
-      const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: '24h' });
-      res.json({ info, token }).status(202).end();
-    });
   })(req, res);
 });
 
