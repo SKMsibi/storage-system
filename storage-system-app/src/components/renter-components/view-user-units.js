@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import ViewUnitsTable from '../view-units-table';
 import { getUserUnits } from '../../redux/thunks';
@@ -12,7 +11,8 @@ export class ViewUserUnits extends Component {
     render() {
         return (
             <div className="App-container">
-                <ViewUnitsTable units={this.props.units} showOrderButton={false} />
+                <h3>Your current rented Units</h3>
+                <ViewUnitsTable units={this.props.units} showOrderButton={false} updateAvailable={this.props.getUserUnits()} />
             </div>
         )
     }
