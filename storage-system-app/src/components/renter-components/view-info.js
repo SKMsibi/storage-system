@@ -108,7 +108,7 @@ class viewInfo extends Component {
                     </select>)}
                 <button onClick={() => this.getData()} ref="getButton">Go</button>
                 {this.state.displayUnits && (
-                    <ViewUnitsTable units={this.props.units} showOrderButton={true} />
+                    <ViewUnitsTable units={this.props.units} showOrderButton={true} updateAvailable={() => this.props.getAllAvailableUnits(this.props.searchBy, this.props.searchPhrase)} />
                 )}
             </div >
         )
