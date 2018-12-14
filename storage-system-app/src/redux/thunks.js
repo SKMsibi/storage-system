@@ -206,6 +206,7 @@ export function PlaceOrder(unitDetails) {
         }
     };
 };
+
 export function getUserUnits() {
     return async (dispatch) => {
         try {
@@ -217,4 +218,16 @@ export function getUserUnits() {
         }
     };
 };
+export function removeOrder(unitDetails) {
+    return async (dispatch) => {
+        try {
+            await axios.put('http://localhost:3003/remove/order', unitDetails);
+            dispatch(getUserUnits());
+        } catch (error) {
+            // console.log('error is:', error);
+            // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
+        }
+    };
+};
+
 
