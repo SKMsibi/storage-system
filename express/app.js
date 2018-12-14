@@ -282,16 +282,17 @@ app.get('/check/jwt', function (req, res) {
       res.status(204).json({
         message: 'Something Went wrong, please try again later.'
       }).end();
-    };
-    var userInfo = await DBFunctions.getUserInfo(user);
-    if (userInfo) {
-      res.status(202).json({
-        user: user,
-      }).end();
     } else {
-      res.status(204).json({
-        message: 'Something Went wrong, please try again later.'
-      }).end();
+      var userInfo = await DBFunctions.getUserInfo(user);
+      if (userInfo) {
+        res.status(202).json({
+          user: user,
+        }).end();
+      } else {
+        res.status(204).json({
+          message: 'Something Went wrong, please try again later.'
+        }).end();
+      }
     }
   })
 })
@@ -308,6 +309,14 @@ app.get('/user/units', authenticationMiddleware, async function (req, res) {
   }
 })
 
+app.put('/remove/order', authenticationMiddleware, async function (req, res) {
+  try {
+    await DBFunctions.removeClientUnit(req.body);
+    res.status(200).end();
+  } catch (error) {
+    res.status(203).end();
+  }
+})
 app.listen(3003, function () {
   console.log('web server listening on port 3003')
 });
