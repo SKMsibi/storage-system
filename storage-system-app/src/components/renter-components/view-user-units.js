@@ -12,7 +12,7 @@ export class ViewUserUnits extends Component {
         return (
             <div className="App-container">
                 <h3>Your current rented Units</h3>
-                <ViewUnitsTable units={this.props.units} showOrderButton={false} updateAvailable={this.props.getUserUnits()} />
+                <ViewUnitsTable units={this.props.units} showOrderButton={false} updateAvailable={() => this.props.getUserUnits()} />
             </div>
         )
     }
