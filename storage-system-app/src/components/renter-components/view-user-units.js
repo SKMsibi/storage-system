@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import ViewUnitsTable from '../view-units-table';
+import ViewUnitsTable from './view-units-table';
 import { getUserUnits } from '../../redux/thunks';
 
 export class ViewUserUnits extends Component {

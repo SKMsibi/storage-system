@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { UnitForm } from "./forms/insert-unit-form";
-import { getAllUnitTypes, submitAUnitType, getBusinesses, getAllBlocks, submitUnit } from '../redux/thunks';
-import InsertUnitTypeForm from './forms/insert-unit-type-form'
-import '../App.css';
-import * as actions from '../redux/actions'
+import { UnitForm } from "../forms/insert-unit-form";
+import { getAllUnitTypes, submitAUnitType, getBusinesses, getAllBlocks, submitUnit } from '../../redux/thunks';
+import InsertUnitTypeForm from '../forms/insert-unit-type-form'
+import '../../App.css';
+import * as actions from '../../redux/actions'
 
 class InsertUnit extends Component {
     constructor(props) {

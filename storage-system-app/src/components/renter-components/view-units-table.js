@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { PlaceOrder, removeOrder } from '../redux/thunks'
-import "../App.css"
+import { PlaceOrder, removeOrder } from '../../redux/thunks'
+import "../../App.css"
 
 class ViewUnitsTable extends Component {
     removeUnitOrder(details) {

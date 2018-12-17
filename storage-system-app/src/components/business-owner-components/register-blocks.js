@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
-import BlockForm from './forms/insert-block-form';
-import { getAllBusinessesWithLocations, getBusinessLocations, submitBlocks } from '../redux/thunks'
-import '../App.css';
-import * as actions from '../redux/actions';
+import BlockForm from '../forms/insert-block-form';
+import { getAllBusinessesWithLocations, getBusinessLocations, submitBlocks } from '../../redux/thunks'
+import '../../App.css';
+import * as actions from '../../redux/actions';
 
 export class RegisterBlocks extends Component {
     constructor(props) {

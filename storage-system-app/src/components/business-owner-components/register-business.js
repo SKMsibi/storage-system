@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import BusinessForm from './forms/register-business-form';
+import BusinessForm from '../forms/register-business-form';
 export default class RegisterBusiness extends Component {
     render() {
         return (

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import * as thunks from '../../redux/thunks';
 import * as actions from '../../redux/actions'
-import ViewUnitsTable from '../view-units-table';
+import ViewUnitsTable from './view-units-table';
 class viewInfo extends Component {
     constructor(props) {
         super(props)

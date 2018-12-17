@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import RegisterBlocks from './components/register-blocks';
-import InsertUnit from './components/insert-unit';
-import InsertLocation from './components/insert-location';
+import RegisterBlocks from './components/business-owner-components/register-blocks';
+import InsertUnit from './components/business-owner-components/insert-unit';
+import InsertLocation from './components/business-owner-components/insert-location';
 import viewInfo from "./components/renter-components/view-info";
-import RegisterBusiness from './components/register-business';
+import RegisterBusiness from './components/business-owner-components/register-business';
 import ViewUserUnits from './components/renter-components/view-user-units'
+import LandingPage from './components/business-owner-components/landing-page-after-login';
 import LogIn from './components/log-in'
 import navbar from './components/navbar'
 import { Provider } from 'react-redux';
@@ -67,6 +68,7 @@ ReactDOM.render(
                 <Route exact path="/" component={App} />
                 <Route exact path="/signUp" component={App} />
                 <Route exact path="/logIn" component={LogIn} />
+                <Route exact path="/landingPage" component={LandingPage} />
                 <PrivateRouteForClient exact path="/displayUnits" component={viewInfo} />
                 <PrivateRouteForClient exact path="/displayUserUnits" component={ViewUserUnits} />
                 <PrivateRouteForBusinessOwner exact path="/insertBlocks" component={RegisterBlocks} />

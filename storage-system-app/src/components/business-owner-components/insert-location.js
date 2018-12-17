@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import InsertLocationForm from './forms/insert-location-form';
-import * as actions from '../redux/actions';
-import { getBusinesses, submitLocation } from '../redux/thunks'
+import InsertLocationForm from '../forms/insert-location-form';
+import * as actions from '../../redux/actions';
+import { getBusinesses, submitLocation } from '../../redux/thunks'
 
 export class InsertLocation extends Component {
     constructor() {
