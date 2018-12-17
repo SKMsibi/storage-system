@@ -9,7 +9,7 @@ class ViewUnitsTable extends Component {
         this.props.updateAvailable();
     }
     placeOrder(details) {
-        this.props.placeOrder(details);
+        this.props.placeOrder(details, this.props.searchBy, this.props.searchPhrase);
         this.props.updateAvailable();
     }
     formatDate(date) {
@@ -21,7 +21,7 @@ class ViewUnitsTable extends Component {
     render() {
         return (
             <div>
-                {this.props.units.length <= 0 ? <h4>Sorry No units are available for the selected options.</h4> :
+                {!this.props.units || this.props.units.length <= 0 ? <h4>Sorry No units are available for the selected options.</h4> :
                     <table key="unitsTable" className="unitsTable">
                         <thead>
                             <tr>
@@ -66,12 +66,18 @@ class ViewUnitsTable extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        placeOrder: (unitDetails) => {
-            dispatch(PlaceOrder(unitDetails))
+        placeOrder: (unitDetails, searchBy, searchPhrase) => {
+            dispatch(PlaceOrder(unitDetails, searchBy, searchPhrase))
         },
         removeUnits: (unitDetails) => {
             dispatch(removeOrder(unitDetails))
         }
     }
 }
-export default connect(null, mapDispatchToProps)(ViewUnitsTable);
+const mapStateToProps = (state) => {
+    return {
+        searchBy: state.displayUnits.searchBy,
+        searchPhrase: state.displayUnits.searchPhrase
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(ViewUnitsTable);
