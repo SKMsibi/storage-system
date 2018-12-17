@@ -17,7 +17,7 @@ export class LogIn extends Component {
             if (this.props.signInDetails.errorPresent) {
                 this.setState({ errorMessage: this.props.signInDetails.errorMessage, errorPresent: true })
             } else {
-                this.props.history.push("/displayUnits")
+                this.props.history.push("/landingPage")
             }
         }, 1000);
     }
