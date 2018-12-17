@@ -39,56 +39,30 @@ app.use(session({
   saveUninitialized: false
 }));
 
-passport.use(new LocalStrategy({
-  usernameField: 'email',
-  passwordField: 'password'
-},
-  (email, password, done) => {
-    try {
-      DBFunctions.findUser(email).then((user, err) => {
-        if (!user) {
-          return done(null, false, { message: "Incorrect Email or Password." })
-        }
-        bcrypt.compare(password, user.hashed_password, (err, isValid) => {
-          if (err) {
-            return done(err)
-          }
-          if (!isValid) {
-            return done(null, false, { message: "Incorrect Email or Password." })
-          }
-          return done(null, user, { message: 'Logged In Successfully' })
-        })
-      })
-    } catch (error) {
-      return done(err)
-    }
+var cookieExtractor = function (req) {
+  var token = null;
+  if (req && req.headers.authorization) {
+    token = req.headers.authorization;
   }
-))
-
-// var cookieExtractor = function (req) {
-//   var token = null;
-//   if (req && req.headers.authorization) {
-//     token = req.headers.authorization;
-//   }
-//   return token;
-// };
-// passport.use(new JWTStrategy({
-//   jwtFromRequest: cookieExtractor,
-//   secretOrKey: 'TestingStorage'
-// },
-//   function (jwtPayload, done) {
-//     DBFunctions.findUser(jwtPayload.email).then((user, err) => {
-//       if (err) {
-//         return done(err)
-//       }
-//       if (!user) {
-//         return done(null, false)
-//       } else {
-//         return done(null, user);
-//       }
-//     })
-//   }
-// ));
+  return token;
+};
+passport.use(new JWTStrategy({
+  jwtFromRequest: cookieExtractor,
+  secretOrKey: 'TestingStorage'
+},
+  function (jwtPayload, done) {
+    DBFunctions.findUser(jwtPayload.email).then((user, err) => {
+      if (err) {
+        return done(err)
+      }
+      if (!user) {
+        return done(null, false)
+      } else {
+        return done(null, user);
+      }
+    })
+  }
+));
 
 passport.serializeUser(function (user, cb) {
   cb(null, user.id);
@@ -253,49 +227,44 @@ app.post('/signUp', async function (req, res) {
   }
 });
 
-app.post('/login', function (req, res, next) {
-  passport.authenticate('local', { session: true }, (err, user, info) => {
-    if (err) {
-      res.status(204).end();
-    } else if (!user) {
-      res.status(204).end();
-    } else {
-      req.login(user, { session: true }, (err) => {
-        if (err) {
-          res.send(err).status(204).end();
-        }
-        var userInfoForJWT = {
-          UserName: user.user_name,
-          email: user.email,
-          role: user.role
-        }
-        const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: '24h' });
-        res.json({ info, token }).status(202).end();
-      });
+app.post('/login', async function (req, res) {
+  var user = await DBFunctions.findUser(req.body.email);
+  if (!user) {
+    res.status(204).json({ message: "Incorrect Email or Password." }).end();
+  } else {
+    var passwordValid = await bcrypt.compare(req.body.password, user.hashed_password)
+    if (!passwordValid) {
+      res.status(204).json({ message: "Incorrect Email or Password." }).end();
     }
-  })(req, res);
+    req.login(user, { session: true }, (err) => {
+      if (err) {
+        res.status(204).send(err).end();
+      }
+      var userInfoForJWT = {
+        UserName: user.user_name,
+        email: user.email,
+        role: user.role
+      }
+      const token = jwt.sign(userInfoForJWT, 'TestingStorage', { expiresIn: '24h' });
+      res.json({ message: 'Logged In Successfully', token }).status(202).end();
+    });
+  }
 });
 
 
 app.get('/check/jwt', function (req, res) {
-  jwt.verify(req.headers.authorization, 'TestingStorage', async function (err, user) {
+  passport.authenticate('jwt', { session: true }, async (err, user, info) => {
     if (err) {
-      res.status(204).json({
-        message: 'Something Went wrong, please try again later.'
-      }).end();
+      res.status(204).json({ message: 'Something Went wrong, please try again later.' }).end();
     } else {
       var userInfo = await DBFunctions.getUserInfo(user);
       if (userInfo) {
-        res.status(202).json({
-          user: user,
-        }).end();
+        res.status(202).json({ user: user, }).end();
       } else {
-        res.status(204).json({
-          message: 'Something Went wrong, please try again later.'
-        }).end();
+        res.status(204).json({ message: 'Something Went wrong, please try again later.' }).end();
       }
     }
-  })
+  })(req, res);
 })
 
 app.get('/user/units', authenticationMiddleware, async function (req, res) {
