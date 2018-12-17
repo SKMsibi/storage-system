@@ -196,10 +196,11 @@ export function getAllAvailableUnits(searchBy, searchPhrase) {
     };
 };
 
-export function PlaceOrder(unitDetails) {
+export function PlaceOrder(unitDetails, searchBy, searchPhrase) {
     return async (dispatch) => {
         try {
             await axios.post('http://localhost:3003/unit/order', unitDetails);
+            dispatch(getAllAvailableUnits(searchBy, searchPhrase))
         } catch (error) {
             // console.log('error is:', error);
             // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
