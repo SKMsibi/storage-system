@@ -70,7 +70,7 @@ class viewInfo extends Component {
         this.props.setSearchPhrase(this.refs.locationDropDown.value);
         this.refs.getButton.disabled = false;
     }
-    async getData() {
+    getData() {
         this.props.getAllAvailableUnits(this.props.searchBy, this.props.searchPhrase);
         this.setState({ displayUnits: true });
     }
@@ -108,7 +108,7 @@ class viewInfo extends Component {
                     </select>)}
                 <button onClick={() => this.getData()} ref="getButton">Go</button>
                 {this.state.displayUnits && (
-                    <ViewUnitsTable units={this.props.units} showOrderButton={true} updateAvailable={() => this.props.getAllAvailableUnits(this.props.searchBy, this.props.searchPhrase)} />
+                    <ViewUnitsTable units={this.props.units} showOrderButton={true} updateAvailable={() => this.getData()} />
                 )}
             </div >
         )
