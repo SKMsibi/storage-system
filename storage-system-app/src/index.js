@@ -14,10 +14,20 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import axios from 'axios';
 import './index.css';
 import store from './redux/store';
+import jwt_decode from 'jwt-decode';
 
-function checkTokenInSession() {
+function checkTokenInSessionForBusinessOwner() {
     var token = sessionStorage.getItem("jwtToken");
-    if (token) {
+    if (token && jwt_decode(token).role === "Storage Owner") {
+        return true;
+    } else {
+        sessionStorage.removeItem("jwtToken");
+        return false;
+    }
+}
+function checkTokenInSessionForClient() {
+    var token = sessionStorage.getItem("jwtToken");
+    if (token && jwt_decode(token).role === "Storage Ranter") {
         return true;
     } else {
         sessionStorage.removeItem("jwtToken");
@@ -33,9 +43,15 @@ async function checkTokenOnReload() {
         return false;
     }
 }
-const PrivateRoute = ({ component: Component, ...rest }) => (
+const PrivateRouteForClient = ({ component: Component, ...rest }) => (
     <Route {...rest} render={props => (
-        checkTokenInSession() ? <Component {...props} />
+        checkTokenInSessionForClient() ? <Component {...props} />
+            : <Redirect to={{ pathname: '/login' }} />
+    )} />
+)
+const PrivateRouteForBusinessOwner = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={props => (
+        checkTokenInSessionForBusinessOwner() ? <Component {...props} />
             : <Redirect to={{ pathname: '/login' }} />
     )} />
 )
@@ -51,12 +67,12 @@ ReactDOM.render(
                 <Route exact path="/" component={App} />
                 <Route exact path="/signUp" component={App} />
                 <Route exact path="/logIn" component={LogIn} />
-                <PrivateRoute exact path="/insertBlocks" component={RegisterBlocks} />
-                <PrivateRoute exact path="/insertUnitType" component={InsertUnit} />
-                <PrivateRoute exact path="/insertLocation" component={InsertLocation} />
-                <PrivateRoute exact path="/displayUnits" component={viewInfo} />
-                <PrivateRoute exact path="/displayUserUnits" component={ViewUserUnits} />
-                <PrivateRoute exact path="/registerBusiness" component={RegisterBusiness} />
+                <PrivateRouteForClient exact path="/displayUnits" component={viewInfo} />
+                <PrivateRouteForClient exact path="/displayUserUnits" component={ViewUserUnits} />
+                <PrivateRouteForBusinessOwner exact path="/insertBlocks" component={RegisterBlocks} />
+                <PrivateRouteForBusinessOwner exact path="/insertUnitType" component={InsertUnit} />
+                <PrivateRouteForBusinessOwner exact path="/insertLocation" component={InsertLocation} />
+                <PrivateRouteForBusinessOwner exact path="/registerBusiness" component={RegisterBusiness} />
             </div>
         </Router>
     </Provider >, document.getElementById('root'));
