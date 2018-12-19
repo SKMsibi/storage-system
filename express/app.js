@@ -21,7 +21,6 @@ client.connect();
 
 var DBFunctions = require('./routes/functions');
 
-
 app.use(require('express-session')(
   {
     name: 'site_cookie',
