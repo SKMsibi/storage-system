@@ -4,10 +4,11 @@ import App from './App';
 import RegisterBlocks from './components/business-owner-components/register-blocks';
 import InsertUnit from './components/business-owner-components/insert-unit';
 import InsertLocation from './components/business-owner-components/insert-location';
-import viewInfo from "./components/renter-components/view-info";
+import viewInfo from "./components/rentee-components/view-info";
 import RegisterBusiness from './components/business-owner-components/register-business';
-import ViewUserUnits from './components/renter-components/view-user-units'
+import ViewUserUnits from './components/rentee-components/view-user-units'
 import LandingPage from './components/business-owner-components/landing-page-after-login';
+import viewRentedUnits from './components/business-owner-components/view-rented-units'
 import LogIn from './components/log-in'
 import navbar from './components/navbar'
 import { Provider } from 'react-redux';
@@ -75,6 +76,7 @@ ReactDOM.render(
                 <PrivateRouteForBusinessOwner exact path="/insertUnitType" component={InsertUnit} />
                 <PrivateRouteForBusinessOwner exact path="/insertLocation" component={InsertLocation} />
                 <PrivateRouteForBusinessOwner exact path="/registerBusiness" component={RegisterBusiness} />
+                <PrivateRouteForBusinessOwner exact path="/rentedOutUnits" component={viewRentedUnits} />
             </div>
         </Router>
     </Provider >, document.getElementById('root'));
