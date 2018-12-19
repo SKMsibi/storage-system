@@ -20,6 +20,7 @@ export default class navbar extends Component {
                 <button onClick={() => this.changeRoute("/insertUnitType")} className="navigation-button">Insert unites</button>
                 <button onClick={() => this.changeRoute("/displayUnits")} className="navigation-button">View All Units</button>
                 <button onClick={() => this.changeRoute("/displayUserUnits")} className="navigation-button">View My Units</button>
+                <button onClick={() => this.changeRoute("/rentedOutUnits")} className="navigation-button">Rented Units</button>
             </header >
         )
     }
