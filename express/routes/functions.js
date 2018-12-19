@@ -166,7 +166,13 @@ async function removeClientUnit(unitDetails) {
     await client.query('DELETE FROM client_storages WHERE unit_id = $1;', [unitDetails.id]);
     return true
 }
-
+async function getAllRentedOutUnits(userDetails) {
+    var rentedUnits = await client.query('SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city, client_storages.created_at AS bookDate,units.name As unitsName, units.id   FROM public.units INNER JOIN client_storages on units.id = client_storages.unit_id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id  Inner join business on locations.business_id = business.id WHERE business.contact_email =$1;', [userDetails]);
+    if (rentedUnits.rowCount <= 0) {
+        return false;
+    }
+    return rentedUnits.rows;
+}
 module.exports = {
     removeClientUnit,
     findClientUnits,
@@ -190,5 +196,6 @@ module.exports = {
     getAllBlocks,
     getAllAvailableLocations,
     getUserInfo,
-    orderUnit
+    orderUnit,
+    getAllRentedOutUnits
 }  
