@@ -6,6 +6,7 @@ export default function displayUnits(state = {
     allLocations: [],
     allUnits: [],
     allUserUnits: [],
+    allRentedOutUnits: [],
     showInput: false,
     displayUnits: false,
     displaySelected: false,
@@ -33,6 +34,9 @@ export default function displayUnits(state = {
             break;
         case "GET_ALL_USER_UNITS":
             newState = { ...newState, allUserUnits: action.newValue };
+            break;
+        case "GET_ALL_RENTED_OUT_UNITS":
+            newState = { ...newState, allRentedOutUnits: action.newValue };
             break;
         case "SHOW_INPUT":
             newState = { ...newState, showInput: true };
