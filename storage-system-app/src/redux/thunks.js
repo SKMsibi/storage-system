@@ -202,7 +202,7 @@ export function PlaceOrder(unitDetails, searchBy, searchPhrase) {
             await axios.post('http://localhost:3003/unit/order', unitDetails);
             dispatch(getAllAvailableUnits(searchBy, searchPhrase))
         } catch (error) {
-            // console.log('error is:', error);
+            console.log('error is:', error);
             // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
         }
     };
@@ -214,7 +214,7 @@ export function getUserUnits() {
             var userUnits = await axios.get('http://localhost:3003/user/units');
             dispatch(actions.getAllUserUnits(userUnits.data.units))
         } catch (error) {
-            // console.log('error is:', error);
+            console.log('error is:', error);
             // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
         }
     };
@@ -225,7 +225,18 @@ export function removeOrder(unitDetails) {
             await axios.put('http://localhost:3003/remove/order', unitDetails);
             dispatch(getUserUnits());
         } catch (error) {
-            // console.log('error is:', error);
+            console.log('error is:', error);
+            // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
+        }
+    };
+};
+export function getAllRentedUnits() {
+    return async (dispatch) => {
+        try {
+            var rentedUnits = await axios.get('http://localhost:3003/rented/units');
+            dispatch({ type: "GET_ALL_RENTED_OUT_UNITS", newValue: rentedUnits.data.rentedUnits })
+        } catch (error) {
+            console.log('error is:', error);
             // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
         }
     };
