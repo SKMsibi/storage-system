@@ -21,6 +21,7 @@ client.connect();
 
 var DBFunctions = require('./routes/functions');
 
+
 app.use(require('express-session')(
   {
     name: 'site_cookie',
@@ -271,8 +272,7 @@ app.get('/user/units', authenticationMiddleware, async function (req, res) {
   var units = await DBFunctions.findClientUnits(req.loggedInUser.email);
   if (!units) {
     res.status(204).end()
-  }
-  if (units.length <= 0) {
+  } else if (units.length <= 0) {
     res.status(203).end();
   } else {
     res.status(200).json({ units: units }).end();
@@ -287,6 +287,19 @@ app.put('/remove/order', authenticationMiddleware, async function (req, res) {
     res.status(203).end();
   }
 })
+
+app.get('/rented/units', authenticationMiddleware, async function (req, res) {
+  var rentedUnits = await DBFunctions.getAllRentedOutUnits(req.loggedInUser.email)
+  if (!rentedUnits) {
+    res.status(204).end()
+  } else if (rentedUnits.length <= 0) {
+    res.status(203).end();
+  } else {
+    console.log("I wasn't ready!", rentedUnits);
+    res.status(200).json({ rentedUnits: rentedUnits }).end();
+  }
+})
+
 app.listen(3003, function () {
   console.log('web server listening on port 3003')
 });
