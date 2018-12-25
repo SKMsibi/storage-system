@@ -294,7 +294,6 @@ app.get('/rented/units', authenticationMiddleware, async function (req, res) {
   } else if (rentedUnits.length <= 0) {
     res.status(203).end();
   } else {
-    console.log("I wasn't ready!", rentedUnits);
     res.status(200).json({ rentedUnits: rentedUnits }).end();
   }
 })
