@@ -12,7 +12,8 @@ import viewRentedUnits from './components/business-owner-components/view-rented-
 import LogIn from './components/log-in'
 import navbar from './components/navbar'
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { updateUserStatus } from './redux/thunks';
 import axios from 'axios';
 import './index.css';
 import store from './redux/store';
@@ -21,18 +22,22 @@ import jwt_decode from 'jwt-decode';
 function checkTokenInSessionForBusinessOwner() {
     var token = sessionStorage.getItem("jwtToken");
     if (token && jwt_decode(token).role === "Storage Owner") {
+        store.dispatch(updateUserStatus(true, jwt_decode(token).role))
         return true;
     } else {
         sessionStorage.removeItem("jwtToken");
+        store.dispatch(updateUserStatus(false));
         return false;
     }
 }
 function checkTokenInSessionForClient() {
     var token = sessionStorage.getItem("jwtToken");
     if (token && jwt_decode(token).role === "Storage Ranter") {
+        store.dispatch(updateUserStatus(true, jwt_decode(token).role));
         return true;
     } else {
         sessionStorage.removeItem("jwtToken");
+        store.dispatch(updateUserStatus(false));
         return false;
     }
 }
