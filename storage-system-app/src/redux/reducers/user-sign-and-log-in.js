@@ -1,4 +1,6 @@
 export default function SignInLogIn(state = {
+    userLoggedIn: false,
+    loggedInUserRole: null,
     errorPresent: false,
     errorMessage: null
 }, action) {
@@ -13,9 +15,13 @@ export default function SignInLogIn(state = {
         case "REMOVE_ERRORS":
             newState = { ...newState, errorPresent: false, errorMessage: "s" };
             break;
+        case "LOGGED_OUT":
+            newState = { ...newState, userLoggedIn: false, loggedInUserRole: null }
+            break;
+        case "LOGGED_IN":
+            newState = { ...newState, userLoggedIn: true, loggedInUserRole: action.newValue }
+            break;
         default:
-
-
             newState = { ...state }
             break;
     }
