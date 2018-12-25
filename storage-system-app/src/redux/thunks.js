@@ -243,3 +243,17 @@ export function getAllRentedUnits() {
 };
 
 
+export function updateUserStatus(successful, userDetails) {
+    return async (dispatch) => {
+        try {
+            if (successful) {
+                dispatch({ type: "LOGGED_IN", newValue: userDetails })
+            } else {
+                dispatch({ type: "LOGGED_OUT" })
+            }
+        } catch (error) {
+            console.log('error is:', error);
+            // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
+        }
+    };
+};
