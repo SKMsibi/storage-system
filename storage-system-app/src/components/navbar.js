@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Nav, Navbar, NavItem } from 'react-bootstrap';
 
 class navbar extends Component {
     changeRoute(route) {
@@ -13,53 +12,66 @@ class navbar extends Component {
     }
     render() {
         return (
-            <div>
-                <Navbar fluid className={'navbar-bg'}>
-                    <Navbar.Header>
-                        <Navbar.Brand>
-                            <a>StorageGuru</a>
-                        </Navbar.Brand>
-                        <Navbar.Toggle />
-                    </Navbar.Header>
-                    <Navbar.Collapse>
-                        <Nav>
-                            {this.props.userStatus && (
-                                <NavItem onClick={() => this.changeRoute("/logOut")} >User log out</NavItem>
-                            )}
-                        </Nav>
-                        {!this.props.userStatus && (
-                            <Nav pullRight>
-                                <NavItem eventKey={1} onClick={() => this.changeRoute("/signUp")}>User sign-up</NavItem>
-                                <NavItem eventKey={2} onClick={() => this.changeRoute("/logIn")}>User Login</NavItem>
-                            </Nav>
-                        )}
-                        {(this.props.userStatus && this.props.role === "Storage Owner") && (
-                            <Nav pullRight>
-                                <NavItem onClick={() => this.changeRoute("/registerBusiness")} >Register Business</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/insertLocation")} >Business location</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/insertBlocks")} >Insert Blocks</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/insertUnitType")} >Insert unites</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/rentedOutUnits")} >Rented Units</NavItem>
-                            </Nav>
-                        )}
-                        {(this.props.userStatus && this.props.role === "Storage Owner") && (
-                            <Nav pullRight>
-                                <NavItem onClick={() => this.changeRoute("/registerBusiness")} >Register Business</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/insertLocation")} >Business location</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/insertBlocks")} >Insert Blocks</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/insertUnitType")} >Insert unites</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/rentedOutUnits")} >Rented Units</NavItem>
-                            </Nav>
-                        )}
-                        {(this.props.userStatus && this.props.role === "Storage Ranter") && (
-                            <Nav pullRight>
-                                <NavItem onClick={() => this.changeRoute("/displayUnits")} >View All Units</NavItem>
-                                <NavItem onClick={() => this.changeRoute("/displayUserUnits")} >View My Units</NavItem>
-                            </Nav>
-                        )}
-                    </Navbar.Collapse>
-                </Navbar>
-            </div >
+            <div className="nav">
+                <div className="nav-btn">
+                    <label htmlFor="nav-check">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </label>
+                </div>
+                <div className="nav-links">
+                    {this.props.userStatus && (
+                        <a onClick={() => this.changeRoute("/logOut")} >log out</a>
+                    )}
+                    {!this.props.userStatus && (
+                        <a onClick={() => this.changeRoute("/signUp")}>Sign-up</a>
+                    )}
+                    {!this.props.userStatus && (
+                        <a onClick={() => this.changeRoute("/logIn")}>Login</a>
+                    )}
+
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/registerBusiness")} >Register Business</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/insertLocation")} >Business location</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/insertBlocks")} >Insert Blocks</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/insertUnitType")} >Insert unites</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/rentedOutUnits")} >Rented Units</a>
+                    )}
+
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/registerBusiness")} >Register Business</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/insertLocation")} >Business location</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/insertBlocks")} >Insert Blocks</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/insertUnitType")} >Insert unites</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Owner") && (
+                        <a onClick={() => this.changeRoute("/rentedOutUnits")} >Rented Units</a>
+                    )}
+
+                    {(this.props.userStatus && this.props.role === "Storage Ranter") && (
+                        <a onClick={() => this.changeRoute("/displayUnits")} >View All Units</a>
+                    )}
+                    {(this.props.userStatus && this.props.role === "Storage Ranter") && (
+                        <a onClick={() => this.changeRoute("/displayUserUnits")} >View My Units</a>
+                    )}
+                </div>
+            </div>
+
         )
     }
 }
