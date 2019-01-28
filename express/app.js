@@ -84,7 +84,7 @@ function authenticationMiddleware(req, res, next) {
 
 app.post('/businessData', authenticationMiddleware, async function (req, res) {
   try {
-    await DBFunctions.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email)
+    await DBFunctions.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.userEmail)
     res.status(201).end();
   } catch (error) {
     res.status(203).send("sorry cant register business info : " + `${error}`).end();
@@ -134,18 +134,26 @@ app.post('/unitTypes', authenticationMiddleware, async function (req, res) {
   }
 });
 
-app.get('/businesses', authenticationMiddleware, async function (req, res) {
+app.get('/businesses-for-user', async function (req, res) {
   try {
-    var businessNames = await DBFunctions.getAllBusinessNames();
+    var businessNames = await DBFunctions.getAllBusinessNamesForUser();
+    res.status(200).send(businessNames).end();
+  } catch (error) {
+    res.status(203).end();
+  }
+});
+app.get('/businesses/:ownerEmail', authenticationMiddleware, async function (req, res) {
+  try {
+    var businessNames = await DBFunctions.getAllBusinessNames(req.params.ownerEmail);
     res.status(200).send(businessNames).end();
   } catch (error) {
     res.status(203).end();
   }
 });
 
-app.get('/businessesWithLocations', authenticationMiddleware, async function (req, res) {
+app.get('/businessesWithLocations/:userEmail', authenticationMiddleware, async function (req, res) {
   try {
-    var businessNames = await DBFunctions.getAllBusinessWithLocations();
+    var businessNames = await DBFunctions.getAllBusinessWithLocations(req.params.userEmail);
     res.status(200).send(businessNames).end();
   } catch (error) {
     res.status(203).end();
@@ -228,6 +236,7 @@ app.post('/signUp', async function (req, res) {
 });
 
 app.post('/login', async function (req, res) {
+  console.log("login was called");
   var user = await DBFunctions.findUser(req.body.email);
   if (!user) {
     res.status(204).json({ message: "Incorrect Email or Password." }).end();
