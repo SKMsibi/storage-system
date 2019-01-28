@@ -33,7 +33,10 @@ class navbar extends Component {
                         // eslint-disable-next-line
                         <a onClick={() => this.changeRoute("/logIn")}>Login</a>
                     )}
-
+                    {!this.props.userStatus && (
+                        // eslint-disable-next-line
+                        <a onClick={() => this.changeRoute("/view-Units")}>View Units</a>
+                    )}
                     {(this.props.userStatus && this.props.role === "Storage Owner") && (
                         // eslint-disable-next-line
                         <a onClick={() => this.changeRoute("/registerBusiness")} >Register Business</a>
