@@ -21,7 +21,7 @@ class ViewUnitsTable extends Component {
     render() {
         return (
             <div>
-                {!this.props.units || this.props.units.length <= 0 ? <h4>Sorry No units are available for the selected options.</h4> :
+                {!this.props.units || this.props.units.length <= 0 ? <h4>Sorry No units are available.</h4> :
                     <table key="unitsTable" className="unitsTable">
                         <thead>
                             <tr>
