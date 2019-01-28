@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import { submitBusiness } from '../../redux/thunks';
 import * as actions from '../../redux/actions';
+import jwt_decode from 'jwt-decode';
+
 
 export class BusinessForm extends Component {
     constructor(props) {
@@ -13,7 +15,9 @@ export class BusinessForm extends Component {
         this.setState({ shouldRedirect: false })
     }
     async registerBusiness(e) {
-        this.props.saveBusiness(this.props.businessForm.RegisterBusiness.values);
+        var token = sessionStorage.getItem("jwtToken");
+        var userDetails = jwt_decode(token);
+        this.props.saveBusiness(this.props.businessForm.RegisterBusiness.values, userDetails);
         this.props.history.push("/insertLocation");
         e.preventDefault();
     }
@@ -45,7 +49,7 @@ export class BusinessForm extends Component {
                                     <Field name="telephone" component="input" type="tel" required={true} />
                                 </div>
                                 <div className="form-row">
-                                    <label htmlFor="email">Email</label>
+                                    <label htmlFor="email">Notification Email</label>
                                     <Field name="email" component="input" type="email" required={true} />
                                 </div>
                             </div>
@@ -69,8 +73,8 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        saveBusiness: (businessData) => {
-            dispatch(submitBusiness(businessData))
+        saveBusiness: (businessData, userDetails) => {
+            dispatch(submitBusiness(businessData, userDetails))
         },
         removeErr: () => {
             dispatch(actions.removeError());
