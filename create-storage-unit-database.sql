@@ -1,9 +1,19 @@
-CREATE TABLE IF NOT EXISTS business (
+CREATE TABLE IF NOT EXISTS clients(
+    id serial PRIMARY KEY,
+    user_name varchar(100) NOT NULL,
+    email varchar(200) NOT NULL UNIQUE,
+    role varchar(100) NOT NULL,
+    hashed_password varchar(200) NOT NULL,
+    salt varchar(100) NOT NULL,
+    created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
+    updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
+);CREATE TABLE IF NOT EXISTS business (
     id serial PRIMARY KEY,
     name varchar(100) NOT NULL UNIQUE,
     contact_name varchar(100) NOT NULL,
     contact_Number varchar(100) NOT NULL,
     contact_email varchar(200) NOT NULL,
+    business_owner_id INT REFERENCES clients(id) NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS locations (
@@ -37,15 +47,6 @@ CREATE TABLE IF NOT EXISTS business (
     block_id INT REFERENCES blocks(id) NOT NULL,
     created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
-);CREATE TABLE IF NOT EXISTS clients(
-    id serial PRIMARY KEY,
-    user_name varchar(100) NOT NULL,
-    email varchar(200) NOT NULL UNIQUE,
-    role varchar(100) NOT NULL,
-    hashed_password varchar(200) NOT NULL,
-    salt varchar(100) NOT NULL,
-    created_at timestamp NOT NULL DEFAULT NOW() NOT NULL,
-    updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );CREATE TABLE IF NOT EXISTS client_storages(
     id serial PRIMARY KEY,
     client_id INT REFERENCES clients(id) NOT NULL,
@@ -54,14 +55,31 @@ CREATE TABLE IF NOT EXISTS business (
     updated_at timestamp NOT NULL DEFAULT NOW() NOT NULL
 );
 INSERT INTO
+    clients(
+        user_name,
+        email,
+        role,
+        hashed_password,
+        salt
+    )
+VALUES
+    (
+        'Sabelo',
+        'skm@gmail.com',
+        'renter',
+        'saokfjlsajdfljsf323rsdf23e',
+        '$2b$10$hpM/htGGEvmITPs77p9HoO'
+    );
+INSERT INTO
     business(
         name,
         contact_name,
         contact_number,
-        contact_email
+        contact_email,
+        business_owner_id
     )
 VALUES
-    ('TCG', 'Theo', '071659813', 'Theo@tcg.com');
+    ('TCG', 'Theo', '071659813', 'Theo@tcg.com', 1);
 INSERT INTO
     locations(
         address1,
@@ -93,25 +111,9 @@ INSERT INTO
 VALUES
     ('warehouse', 1, 120, 180, 80);
 INSERT INTO
-    Units(name, Unit_type_id)
+    Units(name, Unit_type_id,block_id)
 VALUES
-    ('A3', 1);
-INSERT INTO
-    clients(
-        user_name,
-        email,
-        role,
-        hashed_password,
-        salt
-    )
-VALUES
-    (
-        'Sabelo',
-        'skm@gmail.com',
-        'renter',
-        'saokfjlsajdfljsf323rsdf23e',
-        '$2b$10$hpM/htGGEvmITPs77p9HoO'
-    );
+    ('A3', 1,1);
 INSERT INTO
     used_storages(
         client_id,
