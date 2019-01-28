@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import InsertLocationForm from '../forms/insert-location-form';
 import * as actions from '../../redux/actions';
 import { getBusinesses, submitLocation } from '../../redux/thunks'
+import jwt_decode from 'jwt-decode';
 
 export class InsertLocation extends Component {
     constructor() {
@@ -16,10 +17,12 @@ export class InsertLocation extends Component {
         this.submitData = this.submitData.bind(this);
         this.handleSection = this.handleSection.bind(this);
     }
-     componentDidMount() {
-        this.props.getBusinesses();
+    componentDidMount() {
+        var token = sessionStorage.getItem("jwtToken");
+        var userDetails = jwt_decode(token);
+        this.props.getBusinesses(userDetails);
     }
-     submitData() {
+    submitData() {
         this.props.saveLocation({ ...this.props.formData.values, businessName: this.state.selectedBusiness });
         this.props.completeSubmission();
         this.props.history.push("/insertBlocks");
@@ -63,8 +66,8 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-        getBusinesses: () => {
-            dispatch(getBusinesses())
+        getBusinesses: (userDetails) => {
+            dispatch(getBusinesses(userDetails))
         },
         setBusinessName: (name) => {
             dispatch(actions.changeSelectedBusiness(name))
