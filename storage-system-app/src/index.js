@@ -75,6 +75,7 @@ ReactDOM.render(
                 <Route exact path="/signUp" component={App} />
                 <Route exact path="/logIn" component={LogIn} />
                 <Route exact path="/landingPage" component={LandingPage} />
+                <Route exact path="/view-Units" component={viewInfo} />
                 <PrivateRouteForClient exact path="/displayUnits" component={viewInfo} />
                 <PrivateRouteForClient exact path="/displayUserUnits" component={ViewUserUnits} />
                 <PrivateRouteForBusinessOwner exact path="/insertBlocks" component={RegisterBlocks} />
