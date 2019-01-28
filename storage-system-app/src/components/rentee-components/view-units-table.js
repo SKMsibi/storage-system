@@ -1,16 +1,31 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { PlaceOrder, removeOrder } from '../../redux/thunks'
-import "../../App.css"
+import jwtDecode from 'jwt-decode';
+import "../../App.css";
 
 class ViewUnitsTable extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            userMessage: "",
+            showMessage: false
+        }
+    }
+
     removeUnitOrder(details) {
         this.props.removeUnits(details)
         this.props.updateAvailable();
     }
     placeOrder(details) {
-        this.props.placeOrder(details, this.props.searchBy, this.props.searchPhrase);
-        this.props.updateAvailable();
+        var token = sessionStorage.getItem("jwtToken");
+        if (token && jwtDecode(token).role) {
+            this.props.placeOrder(details, this.props.searchBy, this.props.searchPhrase);
+            this.props.updateAvailable();
+        } else {
+            this.setState({ showMessage: true, userMessage: "Log-in or sign up to order." })
+        }
+
     }
     formatDate(date) {
         var daysOfTheWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -21,6 +36,9 @@ class ViewUnitsTable extends Component {
     render() {
         return (
             <div>
+                {this.state.showMessage && (
+                    <h5>{this.state.userMessage}</h5>
+                )}
                 {!this.props.units || this.props.units.length <= 0 ? <h4>Sorry No units are available.</h4> :
                     <table key="unitsTable" className="unitsTable">
                         <thead>
