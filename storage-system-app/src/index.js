@@ -7,7 +7,7 @@ import InsertLocation from './components/business-owner-components/insert-locati
 import viewInfo from "./components/rentee-components/view-info";
 import RegisterBusiness from './components/business-owner-components/register-business';
 import ViewUserUnits from './components/rentee-components/view-user-units'
-import LandingPage from './components/business-owner-components/landing-page-after-login';
+import LandingPage from './components/landing-page-after-login';
 import viewRentedUnits from './components/business-owner-components/view-rented-units'
 import LogIn from './components/log-in'
 import navbar from './components/navbar'
