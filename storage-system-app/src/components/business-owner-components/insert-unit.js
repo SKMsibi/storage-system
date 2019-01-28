@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { UnitForm } from "../forms/insert-unit-form";
 import { getAllUnitTypes, submitAUnitType, getBusinesses, getAllBlocks, submitUnit } from '../../redux/thunks';
-import InsertUnitTypeForm from '../forms/insert-unit-type-form'
+import InsertUnitTypeForm from '../forms/insert-unit-type-form';
+import jwt_decode from 'jwt-decode';
 import '../../App.css';
 import * as actions from '../../redux/actions'
 
@@ -22,7 +23,9 @@ class InsertUnit extends Component {
         this.submitUnit = this.submitUnit.bind(this);
     }
     componentDidMount() {
-        this.props.getBusinesses();
+        var token = sessionStorage.getItem("jwtToken");
+        var userDetails = jwt_decode(token);
+        this.props.getBusinesses(userDetails);
         this.props.getUnitTypes();
     };
     showUnitTypeForm() {
@@ -76,7 +79,7 @@ class InsertUnit extends Component {
                             {this.props.allUnitTypes.map(singleType => {
                                 return <option key={this.props.allUnitTypes.indexOf(singleType)} value={`${singleType.name},${singleType.height},${singleType.length},${singleType.width}`}>{singleType.name} ({singleType.height}, {singleType.length}, {singleType.width})</option>
                             })}
-                        </select><button onClick={this.showUnitTypeForm} disabled={!this.props.selectedBusiness}>New Type</button>
+                        </select> or <button onClick={this.showUnitTypeForm} disabled={!this.props.selectedBusiness}>New Type</button>
                     </div>
                     {this.state.showForm && (
                         <UnitForm allBlocks={this.props.allBlocks} submitUnit={this.submitUnit} />
@@ -110,8 +113,8 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        getBusinesses: () => {
-            dispatch(getBusinesses())
+        getBusinesses: (user) => {
+            dispatch(getBusinesses(user))
         },
         getUnitTypes: () => {
             dispatch(getAllUnitTypes())
