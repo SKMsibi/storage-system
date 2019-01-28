@@ -159,7 +159,7 @@ app.get('/businessesWithLocations/:userEmail', authenticationMiddleware, async f
     res.status(203).end();
   }
 });
-app.get('/allUnits/:searchBy/:searchPhrase', authenticationMiddleware, async function (req, res) {
+app.get('/allUnits/:searchBy/:searchPhrase', async function (req, res) {
   try {
     var allUnits = await DBFunctions.getUnits(req.params);
     res.status(200).send(allUnits).end()
