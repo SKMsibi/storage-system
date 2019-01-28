@@ -106,7 +106,7 @@ class viewInfo extends Component {
                             return <option key={this.props.unitTypes.indexOf(singleUnitType)} value={`${singleUnitType.name}, ${singleUnitType.height}, ${singleUnitType.length}, ${singleUnitType.width}`}> {singleUnitType.name} ({singleUnitType.height}, {singleUnitType.length}, {singleUnitType.width})</option>
                         })}
                     </select>)}
-                <button onClick={() => this.getData()} ref="getButton">Go</button>
+                <button onClick={() => this.getData()} ref="getButton" className="submit-btn">Go</button>
                 {this.state.displayUnits && (
                     <ViewUnitsTable units={this.props.units} showOrderButton={true} updateAvailable={() => this.getData()} />
                 )}
