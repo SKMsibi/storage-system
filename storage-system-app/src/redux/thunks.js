@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as actions from "./actions";
+import jwtDecode from 'jwt-decode';
 
 function setHeaders() {
     var token = sessionStorage.getItem("jwtToken");
@@ -17,7 +18,7 @@ function setHeaders() {
 
 export function getBusinessesForUnits() {
     return async (dispatch) => {
-        var allTheBusiness = await axios.get('http://localhost:3003/businesses');
+        var allTheBusiness = await axios.get('http://localhost:3003/businesses-for-user');
         if (allTheBusiness.data) {
             dispatch(actions.getBusinessesForUnits(allTheBusiness.data));
         }
@@ -42,18 +43,18 @@ export function getLocationsForUnits() {
         }
     };
 };
-export function getBusinesses() {
+export function getBusinesses(userData) {
     return async (dispatch) => {
-        var allTheBusiness = await axios.get('http://localhost:3003/businesses');
+        var allTheBusiness = await axios.get('http://localhost:3003/businesses/' + userData.email);
         if (allTheBusiness.data) {
             dispatch(actions.getAllBusinesses(allTheBusiness.data));
         }
     };
 };
-export function submitBusiness(businessData) {
+export function submitBusiness(businessData, userData) {
     return async (dispatch) => {
         try {
-            await axios.post('http://localhost:3003/businessData', businessData);
+            await axios.post('http://localhost:3003/businessData', { ...businessData, userEmail: userData.email });
             dispatch({ type: "SUBMIT" });
         } catch (error) {
             dispatch({ type: "ERROR_CREATED" });
@@ -70,10 +71,10 @@ export function submitLocation(location) {
         }
     };
 };
-export function getAllBusinessesWithLocations() {
+export function getAllBusinessesWithLocations(userDetails) {
     return async (dispatch) => {
         try {
-            var allTheBusiness = await axios.get('http://localhost:3003/businessesWithLocations');
+            var allTheBusiness = await axios.get('http://localhost:3003/businessesWithLocations/' + userDetails.email);
             dispatch(actions.getBusinessesWithLocation(allTheBusiness.data))
         } catch (error) {
             dispatch({ type: "ERROR_CREATED" });
@@ -155,6 +156,8 @@ export function signIn(userInfo) {
             } else {
                 dispatch({ type: "REMOVE_ERRORS" });
                 sessionStorage.setItem("jwtToken", requestResults.data.token);
+                var decoded = jwtDecode(requestResults.data.token);
+                dispatch({ type: "LOGGED_IN", newValue: decoded.role })
                 setHeaders();
             }
         } catch (error) {
@@ -166,15 +169,19 @@ export function signIn(userInfo) {
 export function logIn(userInfo) {
     return async (dispatch) => {
         try {
+            var decoded;
             var requestResults = await axios.post('http://localhost:3003/logIn', userInfo);
-            console.log('requestResults.status :', requestResults.status);
             if (requestResults.status === 202) {
                 dispatch({ type: "REMOVE_ERRORS" });
                 sessionStorage.setItem("jwtToken", requestResults.data.token);
+                decoded = jwtDecode(requestResults.data.token);
+                dispatch({ type: "LOGGED_IN", newValue: decoded.role })
                 setHeaders();
             } else if (requestResults.status === 200) {
                 dispatch({ type: "REMOVE_ERRORS" });
                 sessionStorage.setItem("jwtToken", requestResults.data.token);
+                decoded = jwtDecode(requestResults.data.token);
+                dispatch({ type: "LOGGED_IN", newValue: decoded.role })
                 setHeaders();
             } else if (requestResults.status === 204) {
                 dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "Wrong Email or password." })
@@ -234,7 +241,11 @@ export function getAllRentedUnits() {
     return async (dispatch) => {
         try {
             var rentedUnits = await axios.get('http://localhost:3003/rented/units');
-            dispatch({ type: "GET_ALL_RENTED_OUT_UNITS", newValue: rentedUnits.data.rentedUnits })
+            if (rentedUnits.data.rentedUnits) {
+                dispatch({ type: "GET_ALL_RENTED_OUT_UNITS", newValue: rentedUnits.data.rentedUnits })
+            } else {
+                dispatch({ type: "GET_ALL_RENTED_OUT_UNITS", newValue: [] })
+            }
         } catch (error) {
             console.log('error is:', error);
             // dispatch({ type: "ERROR_CREATED_LOGGING_IN", newValue: "something went wrong" })
