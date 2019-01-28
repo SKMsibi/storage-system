@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import BlockForm from '../forms/insert-block-form';
 import { getAllBusinessesWithLocations, getBusinessLocations, submitBlocks } from '../../redux/thunks'
+import jwt_decode from 'jwt-decode';
 import '../../App.css';
 import * as actions from '../../redux/actions';
 
@@ -24,7 +25,9 @@ export class RegisterBlocks extends Component {
         this.handleLocationSelection = this.handleLocationSelection.bind(this);
     }
     componentDidMount() {
-        this.props.getBusinesses();
+        var token = sessionStorage.getItem("jwtToken");
+        var userDetails = jwt_decode(token);
+        this.props.getBusinesses(userDetails);
     }
     handleChange(event) {
         this.setState({ numberOfBlocks: event.target.value, showBlocksInsert: false });
@@ -124,8 +127,8 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        getBusinesses: () => {
-            dispatch(getAllBusinessesWithLocations())
+        getBusinesses: (user) => {
+            dispatch(getAllBusinessesWithLocations(user))
         },
         changeSelectedBusiness: (newBusiness) => {
             dispatch(actions.changeSelectedBusinessInBlocks(newBusiness))
