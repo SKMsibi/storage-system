@@ -5,13 +5,21 @@ client.connect();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-async function getAllBusinessNames() {
-    const businessNames = await client.query(`SELECT name FROM business;`);
+async function getAllBusinessNamesForUser() {
+    const businessNames = await client.query("SELECT name FROM public.business inner join clients on business.business_owner_id = clients.id;");
+    // await client.end();
+    return businessNames.rows;
+}
+async function getAllBusinessNames(userEmail) {
+    const businessNames = await client.query("SELECT name FROM public.business inner join clients on business.business_owner_id = clients.id where clients.email =$1;", [userEmail]);
     // await client.end();
     return businessNames.rows;
 };
-async function getAllBusinessWithLocations() {
-    const businessNames = await client.query(`SELECT name FROM business INNER JOIN locations on business.id = locations.business_id;`);
+async function getAllBusinessNamesBelongingToUser(userName) {
+
+}
+async function getAllBusinessWithLocations(userEmail) {
+    const businessNames = await client.query("SELECT name FROM business INNER JOIN clients on business.business_owner_id = clients.id INNER JOIN locations on business.id = locations.business_id  where clients.email =$1;", [userEmail]);
     var validBusinesses = [];
     businessNames.rows.forEach(element => {
         var businessFound = validBusinesses.find(item => item.name === element.name);
@@ -23,18 +31,19 @@ async function getAllBusinessWithLocations() {
     // await client.end();
 };
 async function insertBusinessLocation(businessName, address1, address2, city, region) {
-    const businessId = await client.query(`SELECT id FROM business WHERE name = $1;`, [businessName]);
+    const businessId = await client.query("SELECT id FROM business WHERE name = $1;", [businessName]);
     await client.query("INSERT INTO locations(region,address1,address2, city , business_id) VALUES ( $1,$2,$3,$4,$5 )", [region ? region : null, address1 ? address1 : null, address2 ? address2 : null, city ? city : null, businessId.rows[0].id > 0 ? businessId.rows[0].id : null]);
     // await client.end();
 };
-async function insertBusinessInfo(businessName, contactName, telephone, email) {
-    var addingBusiness = await client.query("INSERT INTO business(name, contact_name, contact_number, contact_email) VALUES ($1,$2,$3,$4)", [businessName ? businessName : null, contactName ? contactName : null, telephone ? telephone : null, email ? email : null]);
+async function insertBusinessInfo(businessName, contactName, telephone, email, userEmail) {
+    const UserId = await client.query("SELECT id FROM clients WHERE email = $1;", [userEmail]);
+    var addingBusiness = await client.query("INSERT INTO business(name, contact_name, contact_number, contact_email,business_owner_id) VALUES ($1,$2,$3,$4,$5)", [businessName ? businessName : null, contactName ? contactName : null, telephone ? telephone : null, email ? email : null, userEmail ? UserId.rows[0].id : null]);
     // await client.end();
     return addingBusiness;
 };
 async function insertBlocks(params) {
     var location = params.selectedLocation.split(",");
-    const businessId = await client.query('SELECT id FROM locations WHERE region = $4 AND address1 = $1 AND address2 = $2 AND city = $3', location);
+    const businessId = await client.query("SELECT id FROM locations WHERE region = $4 AND address1 = $1 AND address2 = $2 AND city = $3", location);
     for (let iterator in params.formValues) {
         await client.query("INSERT INTO blocks(name, locations_id) VALUES ($1, $2);", [params.formValues[iterator], businessId.rows[0].id]);
     }
@@ -89,37 +98,37 @@ async function getUnits(params) {
 };
 async function insertUnitType(params) {
     var { businessName, typeName, height, length, width } = params;
-    const businessId = await client.query('SELECT id FROM business WHERE name = $1;', [businessName]);
-    await client.query('INSERT INTO Unit_types(name,business_id,length,width,height)VALUES($1,$2,$3,$4,$5);', [typeName, businessId.rows[0].id, +length, +width, +height]);
+    const businessId = await client.query("SELECT id FROM business WHERE name = $1;", [businessName]);
+    await client.query("INSERT INTO Unit_types(name,business_id,length,width,height)VALUES($1,$2,$3,$4,$5);", [typeName, businessId.rows[0].id, +length, +width, +height]);
 };
 async function getAllBlocks(businessName) {
-    const blocks = await client.query('SELECT blocks.name FROM blocks INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE business.name = $1', [businessName]);
+    const blocks = await client.query("SELECT blocks.name FROM blocks INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE business.name = $1", [businessName]);
     return blocks.rows
 };
 async function submitUnit(params) {
     var { unitName, blockName, selectedBusiness, unitType } = params;
     var unitTypeValue = unitType.split(",");
-    const blockId = await client.query('SELECT blocks.id FROM blocks INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE blocks.name = $1 AND business.name = $2;', [blockName, selectedBusiness]);
-    const unitTypeId = await client.query('SELECT id FROM unit_types WHERE name=$1 AND height=$2 AND length=$3 AND width=$4;', unitTypeValue);
-    var adding = await client.query('INSERT INTO units(name, unit_type_id, block_id)VALUES($1,$2,$3);', [unitName, unitTypeId.rows[0].id, blockId.rows[0].id]);
+    const blockId = await client.query("SELECT blocks.id FROM blocks INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE blocks.name = $1 AND business.name = $2;", [blockName, selectedBusiness]);
+    const unitTypeId = await client.query("SELECT id FROM unit_types WHERE name=$1 AND height=$2 AND length=$3 AND width=$4;", unitTypeValue);
+    var adding = await client.query("INSERT INTO units(name, unit_type_id, block_id)VALUES($1,$2,$3);", [unitName, unitTypeId.rows[0].id, blockId.rows[0].id]);
 };
 async function registerUser(params) {
     var userExists = false;
     var { userName, email, role, password1 } = params;
-    const userNames = await client.query('SELECT email from clients WHERE email = $1;', [email]);
+    const userNames = await client.query("SELECT email from clients WHERE email = $1;", [email]);
     if (userNames.rowCount > 0) {
         userExists = false;
     } else {
         var generatedSalt = await bcrypt.genSalt(saltRounds);
         var hashedPassword = await bcrypt.hash(password1, generatedSalt);
-        await client.query('INSERT INTO clients(user_name, email, role, hashed_password, salt)VALUES ($1,$2,$3,$4,$5);', [userName, email, role, hashedPassword, generatedSalt]);
+        await client.query("INSERT INTO clients(user_name, email, role, hashed_password, salt)VALUES ($1,$2,$3,$4,$5);", [userName, email, role, hashedPassword, generatedSalt]);
         userExists = true;
     }
     return userExists;
 };
 async function getUserInfo(params) {
     var { email } = params;
-    const userInfo = await client.query('SELECT * from clients WHERE email = $1;', [email]);
+    const userInfo = await client.query("SELECT * from clients WHERE email = $1;", [email]);
     if (userInfo.rowCount <= 0) {
         userExists = false;
     } else {
@@ -129,7 +138,7 @@ async function getUserInfo(params) {
 
 async function logUserIn(params) {
     var { email, password } = params;
-    const userInfo = await client.query('SELECT hashed_password from clients WHERE email = $1;', [email]);
+    const userInfo = await client.query("SELECT hashed_password from clients WHERE email = $1;", [email]);
     if (userInfo.rowCount <= 0) {
         userExists = false;
     } else {
@@ -139,7 +148,7 @@ async function logUserIn(params) {
     return userExists;
 };
 async function findUser(userEmail) {
-    const userInfo = await client.query('SELECT * from clients WHERE email = $1;', [userEmail]);
+    const userInfo = await client.query("SELECT * from clients WHERE email = $1;", [userEmail]);
     if (userInfo.rowCount <= 0) {
         return false;
     }
@@ -154,23 +163,20 @@ async function orderUnit(unitDetails, userDetails) {
     } else return false;
 };
 async function findClientUnits(clientEmail) {
-    const userInfo = await client.query('SELECT * from clients WHERE email = $1;', [clientEmail]);
+    const userInfo = await client.query("SELECT * from clients WHERE email = $1;", [clientEmail]);
     if (userInfo.rowCount <= 0) {
         return false;
     }
-    const clientUnits = await client.query('SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, client_storages.created_at AS bookDate,units.name As unitsName, units.id FROM units INNER JOIN client_storages on units.id = client_storages.unit_id INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE client_id = $1;', [userInfo.rows[0].id]);
+    const clientUnits = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city,Unit_types.name As unitTypeName, Unit_types.length, Unit_types.width, Unit_types.height, client_storages.created_at AS bookDate,units.name As unitsName, units.id FROM units INNER JOIN client_storages on units.id = client_storages.unit_id INNER JOIN unit_types on units.unit_type_id = unit_types.id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id INNER JOIN business on locations.business_id = business.id WHERE client_id = $1;", [userInfo.rows[0].id]);
     return clientUnits.rows;
 }
 
 async function removeClientUnit(unitDetails) {
-    await client.query('DELETE FROM client_storages WHERE unit_id = $1;', [unitDetails.id]);
+    await client.query("DELETE FROM client_storages WHERE unit_id = $1;", [unitDetails.id]);
     return true
 }
 async function getAllRentedOutUnits(userDetails) {
-    var rentedUnits = await client.query('SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city, client_storages.created_at AS bookDate,units.name As unitsName, units.id   FROM public.units INNER JOIN client_storages on units.id = client_storages.unit_id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id  Inner join business on locations.business_id = business.id WHERE business.contact_email =$1;', [userDetails]);
-    if (rentedUnits.rowCount <= 0) {
-        return false;
-    }
+    var rentedUnits = await client.query("SELECT business.name As businessName, Blocks.name As blockName,locations.region,locations.city, client_storages.created_at AS bookDate,units.name As unitsName, units.id   FROM public.units INNER JOIN client_storages on units.id = client_storages.unit_id INNER JOIN blocks on units.block_id = blocks.id INNER JOIN locations on blocks.locations_id = locations.id  Inner join business on locations.business_id = business.id WHERE business.contact_email =$1;", [userDetails]);
     return rentedUnits.rows;
 }
 module.exports = {
@@ -182,6 +188,7 @@ module.exports = {
     submitUnit,
     insertUnitType,
     getAllBusinessNames,
+    getAllBusinessNamesForUser,
     getAllBusinessWithLocations,
     insertBusinessLocation,
     insertBusinessInfo,
