@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { PlaceOrder, removeOrder } from '../../redux/thunks'
 import jwtDecode from 'jwt-decode';
 import "../../App.css";
-
 class ViewUnitsTable extends Component {
     constructor(props) {
         super(props)

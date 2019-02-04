@@ -15,7 +15,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var connectionString = "postgres://sabelo:1230skm@localhost:5432/storage_system";
+var connectionString = process.env.DATABASE_CREDENTIALS;
 const client = new pg.Client(connectionString);
 client.connect();
 
