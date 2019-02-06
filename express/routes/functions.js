@@ -11,7 +11,8 @@ async function getAllBusinessNamesForUser() {
     return businessNames.rows;
 }
 async function getAllBusinessNames(userEmail) {
-    const businessNames = await client.query("SELECT name FROM public.business inner join clients on business.business_owner_id = clients.id where clients.email =$1;", [userEmail]);
+    console.log('userEmail', userEmail)
+    const businessNames = await client.query("SELECT business.name FROM business inner join clients on business.business_owner_id = clients.id where clients.email = $1;", [userEmail]);
     // await client.end();
     return businessNames.rows;
 };
@@ -36,8 +37,8 @@ async function insertBusinessLocation(businessName, address1, address2, city, re
     // await client.end();
 };
 async function insertBusinessInfo(businessName, contactName, telephone, email, userEmail) {
-    const UserId = await client.query("SELECT id FROM clients WHERE email = $1;", [userEmail]);
-    var addingBusiness = await client.query("INSERT INTO business(name, contact_name, contact_number, contact_email,business_owner_id) VALUES ($1,$2,$3,$4,$5)", [businessName ? businessName : null, contactName ? contactName : null, telephone ? telephone : null, email ? email : null, userEmail ? UserId.rows[0].id : null]);
+    const userId = await client.query("SELECT id FROM clients WHERE email = $1;", [userEmail]);
+    var addingBusiness = await client.query("INSERT INTO business(name, contact_name, contact_number, contact_email,business_owner_id) VALUES ($1,$2,$3,$4,$5)", [businessName ? businessName : null, contactName ? contactName : null, telephone ? telephone : null, email ? email : null, userEmail ? userId.rows[0].id : null]);
     // await client.end();
     return addingBusiness;
 };

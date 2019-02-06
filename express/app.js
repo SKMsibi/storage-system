@@ -84,7 +84,7 @@ function authenticationMiddleware(req, res, next) {
 
 app.post('/businessData', authenticationMiddleware, async function (req, res) {
   try {
-    await DBFunctions.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.userEmail)
+    await DBFunctions.insertBusinessInfo(req.body.businessName, req.body.contactName, req.body.telephone, req.body.email, req.body.userEmail)
     res.status(201).end();
   } catch (error) {
     res.status(203).send("sorry cant register business info : " + `${error}`).end();
