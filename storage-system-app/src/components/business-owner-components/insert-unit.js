@@ -76,9 +76,9 @@ class InsertUnit extends Component {
                     <div>
                         <select ref="unitType" onChange={this.handleTypeSelect} disabled={!this.props.selectedBusiness}>
                             <option value="select unit type">Type name (height, length, width)</option>
-                            {this.props.allUnitTypes.map(singleType => {
+                            {this.props.allUnitTypes.length > 0? this.props.allUnitTypes.map(singleType => {
                                 return <option key={this.props.allUnitTypes.indexOf(singleType)} value={`${singleType.name},${singleType.height},${singleType.length},${singleType.width}`}>{singleType.name} ({singleType.height}, {singleType.length}, {singleType.width})</option>
-                            })}
+                            }):  null}
                         </select> or <button onClick={this.showUnitTypeForm} disabled={!this.props.selectedBusiness}>New Type</button>
                     </div>
                     {this.state.showForm && (
