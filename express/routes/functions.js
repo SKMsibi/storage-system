@@ -11,7 +11,6 @@ async function getAllBusinessNamesForUser() {
     return businessNames.rows;
 }
 async function getAllBusinessNames(userEmail) {
-    console.log('userEmail', userEmail)
     const businessNames = await client.query("SELECT business.name FROM business inner join clients on business.business_owner_id = clients.id where clients.email = $1;", [userEmail]);
     // await client.end();
     return businessNames.rows;

@@ -20,7 +20,9 @@ export class InsertLocation extends Component {
     componentDidMount() {
         var token = sessionStorage.getItem("jwtToken");
         var userDetails = jwt_decode(token);
-        this.props.getBusinesses(userDetails);
+        setInterval(() => {
+            this.props.getBusinesses(userDetails);
+        }, 1000);
     }
     submitData() {
         this.props.saveLocation({ ...this.props.formData.values, businessName: this.state.selectedBusiness });
