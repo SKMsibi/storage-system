@@ -147,6 +147,7 @@ app.get('/businesses/:ownerEmail', authenticationMiddleware, async function (req
     var businessNames = await DBFunctions.getAllBusinessNames(req.params.ownerEmail);
     res.status(200).send(businessNames).end();
   } catch (error) {
+    console.log('err', err)
     res.status(203).end();
   }
 });
